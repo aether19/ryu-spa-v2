@@ -3,35 +3,27 @@ import { Link, useLocation } from 'react-router-dom';
 
 const navLinks = [
   { label: 'Treatments', to: '/treatments' },
-  { label: 'Locations', to: '/locations' },
-  { label: 'About', to: '/about' },
+  { label: 'Locations',  to: '/locations'  },
+  { label: 'About',      to: '/about'      },
   { label: 'Gift Cards', to: '/gift-cards' },
 ];
 
 export default function Navigation() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const navRef = useRef<HTMLElement>(null);
+  const [scrolled,    setScrolled]    = useState(false);
+  const [mobileOpen,  setMobileOpen]  = useState(false);
+  const navRef   = useRef<HTMLElement>(null);
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 60);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [location.pathname]);
+  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
 
   useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
@@ -41,23 +33,21 @@ export default function Navigation() {
         ref={navRef}
         className="fixed top-0 left-0 right-0 z-[100] transition-all duration-500"
         style={{
-          backgroundColor: scrolled ? 'rgba(13, 10, 6, 0.92)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
+          backgroundColor: scrolled ? 'rgba(13,10,6,0.92)' : 'transparent',
+          backdropFilter:       scrolled ? 'blur(12px)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
         }}
       >
         <div className="max-w-[1280px] mx-auto px-6 lg:px-10 flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 z-[101]">
-            <span className="font-display text-xl lg:text-2xl tracking-tight text-chi-parchment">
-              Chi Link
-            </span>
+            <span className="font-display text-xl lg:text-2xl tracking-tight text-chi-parchment">Chi Link</span>
             <span className="text-chi-cinnabar text-lg font-display">气</span>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop nav */}
           <div className="hidden lg:flex items-center gap-8">
-            {navLinks.map((item) => (
+            {navLinks.map(item => (
               <Link
                 key={item.label}
                 to={item.to}
@@ -66,14 +56,13 @@ export default function Navigation() {
                 {item.label}
               </Link>
             ))}
-            <a
-              href="https://bookrelax.com.au/booking"
-              target="_blank"
-              rel="noopener noreferrer"
+            {/* Book Now → internal booking page */}
+            <Link
+              to="/booking"
               className="px-5 py-2.5 bg-chi-cinnabar text-chi-parchment label-style hover:bg-chi-parchment hover:text-chi-ink transition-all duration-300 rounded-chi"
             >
               Book Now
-            </a>
+            </Link>
           </div>
 
           {/* Mobile hamburger */}
@@ -93,9 +82,9 @@ export default function Navigation() {
         className={`fixed inset-0 z-[99] lg:hidden flex flex-col items-center justify-center gap-8 transition-all duration-500 ${
           mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
-        style={{ backgroundColor: 'rgba(13, 10, 6, 0.97)', backdropFilter: 'blur(20px)' }}
+        style={{ backgroundColor: 'rgba(13,10,6,0.97)', backdropFilter: 'blur(20px)' }}
       >
-        {navLinks.map((item) => (
+        {navLinks.map(item => (
           <Link
             key={item.label}
             to={item.to}
@@ -106,14 +95,13 @@ export default function Navigation() {
             {item.label}
           </Link>
         ))}
-        <a
-          href="https://bookrelax.com.au/booking"
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          to="/booking"
           className="mt-4 px-8 py-3.5 bg-chi-cinnabar text-chi-parchment label-style rounded-chi"
+          onClick={() => setMobileOpen(false)}
         >
           Book Now
-        </a>
+        </Link>
       </div>
     </>
   );

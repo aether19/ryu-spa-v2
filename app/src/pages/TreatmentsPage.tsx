@@ -43,26 +43,77 @@ const treatments = [
   },
 ];
 
-// Circles calibrated to the body image (800×1200 px, displayed in a 2:3 container)
-// viewBox "0 0 200 300" matches the 2:3 aspect ratio exactly
-const bodyRegions = [
-  { id: 'head',      label: 'Head',      cx: 100, cy: 23,  r: 20 },
-  { id: 'neck',      label: 'Neck',      cx: 100, cy: 46,  r: 10 },
-  { id: 'shoulders', label: 'Shoulders', cx: 100, cy: 63,  r: 42 },
-  { id: 'back',      label: 'Back',      cx: 100, cy: 100, r: 38 },
-  { id: 'arms',      label: 'Arms',      cx: 38,  cy: 110, r: 20 },
-  { id: 'legs',      label: 'Legs',      cx: 100, cy: 200, r: 42 },
-  { id: 'feet',      label: 'Feet',      cx: 100, cy: 278, r: 18 },
+// Each region has one OR MORE circles matching actual anatomy of the 800×1200 body image.
+// viewBox "0 0 200 300" maps to the 800×1200 image at 1:4 scale (200/800 = 300/1200).
+// Pixel coords ÷ 4 = SVG coords.
+// Body image estimates (800 wide, figure centred):
+//   Head centre    ≈ (400,  85)px → (100, 21)
+//   Neck           ≈ (400, 175)px → (100, 44)
+//   Left shoulder  ≈ (210, 238)px → ( 52, 60)   Right ≈ (590, 238)px → (148, 60)
+//   Upper chest    ≈ (400, 355)px → (100, 89)
+//   Left arm       ≈ (162, 415)px → ( 40, 104)  Right ≈ (638, 415)px → (160, 104)
+//   Abdomen        ≈ (400, 505)px → (100, 126)
+//   Upper legs     ≈ (400, 700)px → (100, 175)
+//   Lower legs     ≈ (400, 910)px → (100, 228)
+//   Feet           ≈ (400,1095)px → (100, 274)
+const bodyRegions: {
+  id: string;
+  label: string;
+  circles: { cx: number; cy: number; r: number }[];
+}[] = [
+  {
+    id: 'head',
+    label: 'Head',
+    circles: [{ cx: 100, cy: 21, r: 19 }],
+  },
+  {
+    id: 'neck',
+    label: 'Neck',
+    circles: [{ cx: 100, cy: 44, r: 9 }],
+  },
+  {
+    id: 'shoulders',
+    label: 'Shoulders',
+    // Two separate circles — one on each shoulder
+    circles: [
+      { cx: 52,  cy: 61, r: 18 },
+      { cx: 148, cy: 61, r: 18 },
+    ],
+  },
+  {
+    id: 'back',
+    label: 'Back',
+    circles: [{ cx: 100, cy: 90, r: 32 }],
+  },
+  {
+    id: 'arms',
+    label: 'Arms',
+    // Two circles — one per arm, at elbow level
+    circles: [
+      { cx: 40,  cy: 106, r: 16 },
+      { cx: 160, cy: 106, r: 16 },
+    ],
+  },
+  {
+    id: 'legs',
+    label: 'Legs',
+    circles: [{ cx: 100, cy: 196, r: 40 }],
+  },
+  {
+    id: 'feet',
+    label: 'Feet',
+    circles: [{ cx: 100, cy: 274, r: 16 }],
+  },
 ];
 
 const tooltipMap: Record<string, { name: string; benefit: string }> = {
-  head:      { name: 'Head Spa Therapy',      benefit: 'Calm the mind, restore clarity' },
-  neck:      { name: 'Deep Tissue Massage',   benefit: 'Release weeks of carried tension' },
-  shoulders: { name: 'Deep Tissue Massage',   benefit: 'Targeted shoulder relief' },
-  back:      { name: 'Acupuncture',           benefit: 'Restore flow to blocked pathways' },
-  arms:      { name: 'Cupping Therapy',       benefit: 'Draw out stagnation' },
-  legs:      { name: 'Reflexology',           benefit: 'Balance through the soles' },
-  feet:      { name: 'Reflexology',           benefit: 'Balance through the soles' },
+  head:      { name: 'Head Spa Therapy',    benefit: 'Calm the mind, restore clarity' },
+  neck:      { name: 'Deep Tissue Massage', benefit: 'Release weeks of carried tension' },
+  shoulders: { name: 'Deep Tissue Massage', benefit: 'Targeted shoulder relief' },
+  back:      { name: 'Acupuncture',         benefit: 'Restore flow to blocked pathways' },
+  arms:      { name: 'Cupping Therapy',     benefit: 'Draw out stagnation' },
+  legs:      { name: 'Reflexology',         benefit: 'Balance through the soles' },
+  feet:      { name: 'Reflexology',         benefit: 'Balance through the soles' },
 };
 
 export default function TreatmentsPage() {
@@ -79,15 +130,13 @@ export default function TreatmentsPage() {
       });
       if (tween.scrollTrigger) triggers.push(tween.scrollTrigger);
     });
-    return () => { triggers.forEach((t) => t.kill()); };
+    return () => { triggers.forEach(t => t.kill()); };
   }, []);
 
   const handleRegionHover = (regionId: string, e: React.MouseEvent) => {
     setHoveredRegion(regionId);
     const data = tooltipMap[regionId];
-    if (data) {
-      setTooltip({ x: e.clientX + 14, y: e.clientY - 44, text: `${data.name} — ${data.benefit}` });
-    }
+    if (data) setTooltip({ x: e.clientX + 14, y: e.clientY - 44, text: `${data.name} — ${data.benefit}` });
   };
 
   return (
@@ -96,7 +145,8 @@ export default function TreatmentsPage() {
       <section className="relative pt-32 lg:pt-40 pb-16 lg:pb-24" style={{ backgroundColor: '#0D0A06' }}>
         <div className="max-w-[1280px] mx-auto px-6 lg:px-10">
           <span className="reveal-anim label-style text-chi-cinnabar block mb-4 opacity-0">OUR TREATMENTS</span>
-          <h1 className="reveal-anim font-display text-chi-parchment mb-6 opacity-0" style={{ fontSize: 'clamp(48px, 6vw, 72px)', lineHeight: 0.88, letterSpacing: '-0.04em' }}>
+          <h1 className="reveal-anim font-display text-chi-parchment mb-6 opacity-0"
+            style={{ fontSize: 'clamp(48px, 6vw, 72px)', lineHeight: 0.88, letterSpacing: '-0.04em' }}>
             Ancient methods.<br />Modern results.
           </h1>
           <p className="reveal-anim font-body text-chi-mist max-w-lg opacity-0" style={{ fontSize: '16px', lineHeight: 1.8 }}>
@@ -110,10 +160,11 @@ export default function TreatmentsPage() {
         <div className="max-w-[1280px] mx-auto px-6 lg:px-10">
           <div className="reveal-anim flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
 
-            {/* Body Image with hover overlay — Desktop */}
-            <div className="hidden lg:block relative flex-shrink-0" style={{ width: '240px' }}>
-              {/* paddingBottom: 150% = 3/2 × 100% → height is 1.5× the width → maintains 2:3 ratio */}
+            {/* Body image + SVG hover overlay — Desktop only */}
+            <div className="hidden lg:block relative flex-shrink-0" style={{ width: '250px' }}>
+              {/* paddingBottom 150% = height is 375px → matches 2:3 image ratio */}
               <div style={{ position: 'relative', paddingBottom: '150%' }}>
+
                 <img
                   src="https://cdn.builder.io/api/v1/image/assets%2Fd10e1c74920a4c19987eb605d5fcf4d5%2F737d2465c94b4265ab9715fc252de96d?format=webp&width=800&height=1200"
                   alt="Body diagram"
@@ -124,7 +175,12 @@ export default function TreatmentsPage() {
                     filter: 'sepia(8%) contrast(0.9) brightness(1.05)',
                   }}
                 />
-                {/* SVG overlay with viewBox matching image 2:3 ratio (200 × 300) */}
+
+                {/*
+                  SVG overlay with viewBox "0 0 200 300"
+                  This matches the image's 2:3 ratio so circle coordinates
+                  translate exactly to the correct pixel positions in the image.
+                */}
                 <svg
                   style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                   viewBox="0 0 200 300"
@@ -144,15 +200,16 @@ export default function TreatmentsPage() {
                           }
                         }}
                       >
-                        <circle
-                          cx={region.cx}
-                          cy={region.cy}
-                          r={region.r}
-                          fill={isHovered ? 'rgba(184, 49, 31, 0.15)' : 'transparent'}
-                          stroke={isHovered ? '#B8311F' : 'transparent'}
-                          strokeWidth="1.5"
-                          className="transition-all duration-300"
-                        />
+                        {region.circles.map((c, ci) => (
+                          <circle
+                            key={ci}
+                            cx={c.cx} cy={c.cy} r={c.r}
+                            fill={isHovered ? 'rgba(184,49,31,0.18)' : 'transparent'}
+                            stroke={isHovered ? '#B8311F' : 'transparent'}
+                            strokeWidth="1.5"
+                            style={{ transition: 'all 0.25s ease' }}
+                          />
+                        ))}
                       </g>
                     );
                   })}
@@ -161,12 +218,7 @@ export default function TreatmentsPage() {
                 {tooltip && (
                   <div
                     className="fixed z-50 px-4 py-2 rounded-chi pointer-events-none"
-                    style={{
-                      backgroundColor: '#1A1208',
-                      border: '1px solid rgba(201, 144, 58, 0.2)',
-                      left: tooltip.x,
-                      top: tooltip.y,
-                    }}
+                    style={{ backgroundColor: '#1A1208', border: '1px solid rgba(201,144,58,0.2)', left: tooltip.x, top: tooltip.y }}
                   >
                     <p className="font-body text-chi-parchment text-xs whitespace-nowrap">{tooltip.text}</p>
                   </div>
@@ -178,18 +230,19 @@ export default function TreatmentsPage() {
             <div className="flex-1">
               <h3 className="font-display text-chi-ink text-2xl mb-3">Hover to explore</h3>
               <p className="font-body text-chi-smoke mb-6" style={{ lineHeight: 1.8 }}>
-                Move your cursor over different body regions to discover which treatments target each area. Every treatment is designed to restore flow and balance.
+                Move your cursor over different body regions to discover which treatments target each area.
+                Every treatment is designed to restore flow and balance.
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {bodyRegions.map((region) => (
                   <div
                     key={region.id}
                     className="flex items-center gap-2 px-3 py-2 rounded-chi transition-all duration-200 cursor-pointer"
-                    style={{ backgroundColor: hoveredRegion === region.id ? 'rgba(184, 49, 31, 0.08)' : '#EBE5D6' }}
+                    style={{ backgroundColor: hoveredRegion === region.id ? 'rgba(184,49,31,0.08)' : '#EBE5D6' }}
                     onMouseEnter={(e) => handleRegionHover(region.id, e)}
                     onMouseLeave={() => { setHoveredRegion(null); setTooltip(null); }}
                   >
-                    <span className="w-2 h-2 rounded-full bg-chi-cinnabar" />
+                    <span className="w-2 h-2 rounded-full bg-chi-cinnabar flex-shrink-0" />
                     <span className="font-body text-chi-ink text-sm">{region.label}</span>
                   </div>
                 ))}
@@ -202,32 +255,31 @@ export default function TreatmentsPage() {
         </div>
       </section>
 
-      {/* Treatment Detail Cards - alternating layout */}
+      {/* Treatment Detail Cards */}
       <section id="all-treatments" className="py-16 lg:py-24" style={{ backgroundColor: '#EBE5D6' }}>
         <div className="max-w-[1280px] mx-auto px-6 lg:px-10">
           {treatments.map((treatment, i) => (
             <div key={i}>
               <div className={`reveal-anim flex flex-col ${i % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-0 mb-0`}>
-                {/* Image */}
                 <div className="w-full lg:w-[40%] h-64 lg:h-auto lg:min-h-[400px]">
                   <img src={treatment.image} alt={treatment.name} className="w-full h-full object-cover" loading="lazy" style={{ filter: 'sepia(15%)' }} />
                 </div>
-                {/* Content */}
                 <div className="w-full lg:w-[60%] flex flex-col justify-center p-8 lg:p-14" style={{ backgroundColor: '#F5F0E3' }}>
-                  <h3 className="font-display text-chi-ink mb-2" style={{ fontSize: 'clamp(28px, 3vw, 40px)', lineHeight: 0.95, letterSpacing: '-0.02em' }}>{treatment.name}</h3>
+                  <h3 className="font-display text-chi-ink mb-2" style={{ fontSize: 'clamp(28px,3vw,40px)', lineHeight: 0.95, letterSpacing: '-0.02em' }}>{treatment.name}</h3>
                   <p className="font-subhead italic text-chi-smoke text-lg mb-4">{treatment.benefit}</p>
                   <p className="font-body text-chi-ink mb-3" style={{ fontSize: '16px', lineHeight: 1.7 }}>{treatment.description}</p>
-                  <p className="font-body text-chi-smoke text-sm mb-5" style={{ lineHeight: 1.6 }}><span className="text-chi-cinnabar font-medium">Who it is for:</span> {treatment.who}</p>
+                  <p className="font-body text-chi-smoke text-sm mb-5" style={{ lineHeight: 1.6 }}>
+                    <span className="text-chi-cinnabar font-medium">Who it is for:</span> {treatment.who}
+                  </p>
                   <div className="flex items-center gap-3 flex-wrap mb-5">
                     <span className="px-3 py-1 rounded-full font-body text-xs" style={{ backgroundColor: '#EBE5D6', color: '#1A1208' }}>{treatment.duration}</span>
                     <span className="px-3 py-1 rounded-full font-body text-xs" style={{ backgroundColor: '#EBE5D6', color: '#1A1208' }}>{treatment.price}</span>
                   </div>
-                  <a href="https://bookrelax.com.au/booking" target="_blank" rel="noopener noreferrer" className="inline-flex items-center font-body text-chi-cinnabar text-sm font-medium hover:underline w-fit">
+                  <a href="/booking" className="inline-flex items-center font-body text-chi-cinnabar text-sm font-medium hover:underline w-fit">
                     Book This Treatment →
                   </a>
                 </div>
               </div>
-              {/* Divider */}
               {i < treatments.length - 1 && (
                 <div className="reveal-anim flex items-center justify-center py-6" style={{ backgroundColor: '#F5F0E3' }}>
                   <div className="w-2 h-2 rounded-full bg-chi-mist" />

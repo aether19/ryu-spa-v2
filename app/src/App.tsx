@@ -13,6 +13,7 @@ import PromotionsPage from '@/pages/PromotionsPage';
 import GiftCardsPage from '@/pages/GiftCardsPage';
 import CareersPage from '@/pages/CareersPage';
 import ContactPage from '@/pages/ContactPage';
+import BookingPage from '@/pages/BookingPage';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -26,15 +27,16 @@ export default function App() {
       {isLoading && <Preloader onComplete={handlePreloaderComplete} />}
       <Navigation />
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/"          element={<HomePage />} />
         <Route path="/locations" element={<LocationsHubPage />} />
         <Route path="/locations/:slug" element={<LocationPage />} />
         <Route path="/treatments" element={<TreatmentsPage />} />
-        <Route path="/about" element={<AboutPage />} />
+        <Route path="/about"     element={<AboutPage />} />
         <Route path="/promotions" element={<PromotionsPage />} />
         <Route path="/gift-cards" element={<GiftCardsPage />} />
-        <Route path="/careers" element={<CareersPage />} />
-        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/careers"   element={<CareersPage />} />
+        <Route path="/contact"   element={<ContactPage />} />
+        <Route path="/booking"   element={<BookingPage />} />
       </Routes>
       <Footer />
     </SmoothScrollProvider>
