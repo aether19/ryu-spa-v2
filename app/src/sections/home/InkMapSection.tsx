@@ -34,14 +34,12 @@ const locations: Location[] = [
 ];
 
 export default function InkMapSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const headerRef  = useRef<HTMLDivElement>(null);
-
-  // hoveredLocation: shows preview on mouse-over
-  // lockedLocation:  stays visible after click
+  const sectionRef       = useRef<HTMLDivElement>(null);
+  const headerRef        = useRef<HTMLDivElement>(null);
   const [hoveredLocation, setHoveredLocation] = useState<Location | null>(null);
   const [lockedLocation,  setLockedLocation]  = useState<Location | null>(null);
 
+  // What to display: locked takes priority over hovered
   const displayLocation = lockedLocation ?? hoveredLocation;
 
   const handleDotClick = (loc: Location, e: React.MouseEvent) => {
@@ -49,13 +47,8 @@ export default function InkMapSection() {
     setLockedLocation(prev => prev?.id === loc.id ? null : loc);
   };
 
-  const handleMapClick = () => {
-    setLockedLocation(null);
-  };
-
   useEffect(() => {
     const triggers: ScrollTrigger[] = [];
-
     if (headerRef.current) {
       const t = gsap.fromTo(headerRef.current, { opacity: 0, y: 32 }, {
         opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
@@ -63,7 +56,6 @@ export default function InkMapSection() {
       });
       if (t.scrollTrigger) triggers.push(t.scrollTrigger);
     }
-
     const dots = sectionRef.current?.querySelectorAll('.location-dot');
     if (dots) {
       const t = gsap.fromTo(dots, { scale: 0, opacity: 0 }, {
@@ -72,12 +64,16 @@ export default function InkMapSection() {
       });
       if (t.scrollTrigger) triggers.push(t.scrollTrigger);
     }
-
     return () => { triggers.forEach(t => t.kill()); };
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-24 lg:py-36 overflow-hidden" style={{ backgroundColor: '#0D0A06' }}>
+    <section
+      ref={sectionRef}
+      className="relative py-24 lg:py-36 overflow-hidden"
+      style={{ backgroundColor: '#0D0A06' }}
+      onClick={() => setLockedLocation(null)}
+    >
       <div className="max-w-[1280px] mx-auto px-6 lg:px-10">
 
         <div ref={headerRef} className="text-center mb-12 lg:mb-16 opacity-0">
@@ -91,16 +87,18 @@ export default function InkMapSection() {
         <div
           className="hidden lg:block"
           style={{ position: 'relative', maxWidth: '520px', width: '52%', margin: '0 auto' }}
-          onClick={handleMapClick}
+          onClick={e => e.stopPropagation()}
         >
           <div style={{ position: 'relative', paddingBottom: '93.13%' }}>
 
+            {/* Real Australia SVG outline */}
             <img
               src="/images/MrTim_Australia_Outline.svg"
               alt="Australia map"
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', filter: 'brightness(0) invert(1)', opacity: 0.28 }}
             />
 
+            {/* Dot overlay — viewBox matches SVG file */}
             <svg
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
               viewBox="0 0 674.71 628.37"
@@ -117,9 +115,7 @@ export default function InkMapSection() {
 
               {locations.map((loc) => {
                 const isLocked  = lockedLocation?.id === loc.id;
-                const isHovered = hoveredLocation?.id === loc.id;
-                const isActive  = isLocked || isHovered;
-
+                const isActive  = isLocked || hoveredLocation?.id === loc.id;
                 return (
                   <g
                     key={loc.id}
@@ -127,16 +123,16 @@ export default function InkMapSection() {
                     style={{ transformOrigin: `${loc.cx}px ${loc.cy}px`, cursor: 'pointer' }}
                     onMouseEnter={() => setHoveredLocation(loc)}
                     onMouseLeave={() => setHoveredLocation(null)}
-                    onClick={(e) => handleDotClick(loc, e)}
+                    onClick={e => handleDotClick(loc, e)}
                   >
-                    {/* Pulse ring */}
-                    <circle cx={loc.cx} cy={loc.cy} r="14" fill="none" stroke="#B8311F" strokeWidth="0.6" opacity="0">
+                    {/* Animated pulse ring */}
+                    <circle cx={loc.cx} cy={loc.cy} r="9" fill="none" stroke="#B8311F" strokeWidth="0.6" opacity="0">
                       <animate attributeName="r"       values="9;18;9"    dur="2.8s" repeatCount="indefinite" />
                       <animate attributeName="opacity" values="0.4;0;0.4" dur="2.8s" repeatCount="indefinite" />
                     </circle>
-                    {/* Lock ring — visible when clicked/locked */}
+                    {/* Locked-state outer ring */}
                     {isLocked && (
-                      <circle cx={loc.cx} cy={loc.cy} r="9" fill="none" stroke="#B8311F" strokeWidth="1.5" opacity="0.7" />
+                      <circle cx={loc.cx} cy={loc.cy} r="9" fill="none" stroke="#B8311F" strokeWidth="1.5" opacity="0.6" />
                     )}
                     {/* Solid dot */}
                     <circle
@@ -144,67 +140,47 @@ export default function InkMapSection() {
                       fill={isActive ? '#FF4D2E' : '#B8311F'}
                       stroke="rgba(245,240,227,0.3)"
                       strokeWidth="0.8"
-                      style={{ transition: 'fill 0.15s, r 0.15s' }}
+                      style={{ transition: 'fill 0.15s' }}
                     />
                   </g>
                 );
               })}
             </svg>
 
-            {/* Tooltip — shown on hover OR when locked */}
+            {/* ── Tooltip — original simple card design ── */}
             {displayLocation && (
               <div
-                className="absolute z-10 rounded-chi"
+                className="absolute z-10 p-4 rounded-chi"
                 style={{
                   backgroundColor: '#F5F0E3',
-                  border: lockedLocation ? '1.5px solid #B8311F' : '1px solid rgba(201,144,58,0.2)',
+                  border: '1px solid rgba(201, 144, 58, 0.2)',
                   left: `${(displayLocation.cx / 674.71) * 100}%`,
                   top:  `${(displayLocation.cy / 628.37) * 100}%`,
-                  transform: 'translate(-108%, -115%)',
-                  minWidth: '220px',
-                  boxShadow: lockedLocation ? '0 8px 40px rgba(184,49,31,0.18)' : '0 8px 32px rgba(0,0,0,0.4)',
+                  transform: 'translate(-50%, -120%)',
+                  minWidth: '200px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
                   pointerEvents: lockedLocation ? 'auto' : 'none',
-                  transition: 'box-shadow 0.2s, border-color 0.2s',
                 }}
                 onClick={e => e.stopPropagation()}
               >
-                <div className="p-4">
-                  <div className="flex items-start justify-between gap-3 mb-1">
-                    <h4 className="font-display text-chi-ink text-base leading-tight">{displayLocation.name}</h4>
-                    {lockedLocation && (
-                      <button
-                        onClick={() => setLockedLocation(null)}
-                        className="flex-shrink-0 w-5 h-5 flex items-center justify-center rounded-full text-chi-mist hover:text-chi-ink transition-colors"
-                        style={{ fontSize: '12px', marginTop: '2px', backgroundColor: 'rgba(0,0,0,0.06)' }}
-                      >
-                        ×
-                      </button>
-                    )}
-                  </div>
-                  <p className="font-body text-chi-smoke text-xs mb-3">{displayLocation.address}</p>
-                  <div className="flex items-center gap-1 mb-3">
+                <h4 className="font-display text-chi-ink text-base mb-0.5">{displayLocation.name}</h4>
+                <p className="font-body text-chi-smoke text-xs mb-2">{displayLocation.address}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
                     {[1,2,3,4,5].map(s => (
-                      <svg key={s} width="10" height="10" viewBox="0 0 16 16" fill="#C9903A"><path d="M8 0l2.47 5.01L16 5.81l-4 3.9.94 5.5L8 12.88l-4.94 2.6.94-5.5-4-3.9 5.53-.8z"/></svg>
+                      <svg key={s} width="12" height="12" viewBox="0 0 16 16" fill="#C9903A">
+                        <path d="M8 0l2.47 5.01L16 5.81l-4 3.9.94 5.5L8 12.88l-4.94 2.6.94-5.5-4-3.9 5.53-.8z" />
+                      </svg>
                     ))}
                     <span className="font-body text-xs ml-1" style={{ color: '#C9903A' }}>{displayLocation.rating}</span>
                   </div>
-                  {/* Book Now — always visible in locked state */}
                   <Link
                     to={`/booking?clinic=${displayLocation.id}`}
-                    className="block w-full text-center py-2 rounded-chi font-body text-sm transition-all duration-200"
-                    style={{ backgroundColor: '#B8311F', color: '#F5F0E3' }}
-                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#9B2518')}
-                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#B8311F')}
+                    className="font-body text-chi-cinnabar text-xs hover:underline"
                   >
-                    Book at this location →
+                    Book →
                   </Link>
                 </div>
-                {/* Tiny hint shown before clicking */}
-                {!lockedLocation && (
-                  <div className="px-4 pb-3 -mt-1">
-                    <p className="font-body text-center" style={{ fontSize: '10px', color: '#8C8478' }}>Click dot to pin</p>
-                  </div>
-                )}
               </div>
             )}
           </div>
