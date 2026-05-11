@@ -42,7 +42,7 @@ export default function Navigation() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 z-[101]">
             <span className="font-display text-xl lg:text-2xl tracking-tight text-chi-ink dark:text-chi-parchment">Chi Link</span>
-            <span className="text-chi-ink dark:text-chi-cinnabar text-lg font-display">气</span>
+            <span className="text-chi-ink dark:text-chi-parchment text-lg font-display">气</span>
           </Link>
 
           {/* Desktop nav */}
