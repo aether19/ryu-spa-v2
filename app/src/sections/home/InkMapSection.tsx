@@ -150,20 +150,9 @@ export default function InkMapSection() {
               viewBox="0 0 674.71 628.37"
               fill="none"
             >
-              {/* State labels */}
-              <text x="168" y="258" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">WA</text>
-              <text x="338" y="168" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">NT</text>
-              <text x="386" y="358" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">SA</text>
-              <text x="546" y="246" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">QLD</text>
-              <text x="558" y="385" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">NSW</text>
-              <text x="520" y="474" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">VIC</text>
-              <text x="540" y="574" fill="rgba(255,255,255,0.13)" fontSize="9"  fontFamily="Syne,sans-serif" letterSpacing="1">TAS</text>
-
               {clusters.map(c => {
                 const isLocked  = locked?.id === c.id;
                 const isActive  = isLocked || hovered?.id === c.id;
-                const multi     = c.clinics.length > 1;
-
                 return (
                   <g
                     key={c.id}
@@ -183,26 +172,12 @@ export default function InkMapSection() {
                     {/* Solid dot — slightly larger for multi-location clusters */}
                     <circle
                       cx={c.cx} cy={c.cy}
-                      r={multi ? 8 : 6}
+                      r="7"
                       fill={isActive ? '#FF4D2E' : '#B8311F'}
                       stroke="rgba(245,240,227,0.35)"
                       strokeWidth="1"
                       style={{ transition: 'fill 0.15s' }}
                     />
-                    {/* Count badge for multi-clinic clusters */}
-                    {multi && (
-                      <text
-                        x={c.cx} y={c.cy + 4}
-                        textAnchor="middle"
-                        fill="#F5F0E3"
-                        fontSize="7"
-                        fontFamily="Syne,sans-serif"
-                        fontWeight="600"
-                        style={{ pointerEvents: 'none', userSelect: 'none' }}
-                      >
-                        {c.clinics.length}
-                      </text>
-                    )}
                   </g>
                 );
               })}
