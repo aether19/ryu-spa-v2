@@ -6,6 +6,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const treatments = [
   {
+    id: 'acupuncture',
     image: '/images/treatment-acupuncture.jpg',
     name: 'Acupuncture',
     benefit: 'Restore flow to blocked pathways',
@@ -13,6 +14,7 @@ const treatments = [
     price: 'From $65',
   },
   {
+    id: 'deep-tissue',
     image: '/images/treatment-massage.jpg',
     name: 'Deep Tissue Massage',
     benefit: 'Release weeks of carried tension',
@@ -20,6 +22,7 @@ const treatments = [
     price: 'From $55',
   },
   {
+    id: 'head-spa',
     image: '/images/treatment-headspa.jpg',
     name: 'Head Spa Therapy',
     benefit: 'Calm the mind, restore clarity',
@@ -27,6 +30,7 @@ const treatments = [
     price: 'From $75',
   },
   {
+    id: 'cupping',
     image: '/images/treatment-cupping.jpg',
     name: 'Cupping Therapy',
     benefit: 'Draw out stagnation, improve circulation',
@@ -34,6 +38,7 @@ const treatments = [
     price: 'From $45',
   },
   {
+    id: 'herbal',
     image: '/images/treatment-herbal.jpg',
     name: 'Herbal Medicine',
     benefit: 'Support healing from within',
@@ -41,6 +46,7 @@ const treatments = [
     price: 'From $50',
   },
   {
+    id: 'reflexology',
     image: '/images/treatment-reflexology.jpg',
     name: 'Reflexology',
     benefit: 'Balance through the soles',
@@ -164,9 +170,7 @@ export default function TreatmentsSection() {
                     {treatment.price}
                   </span>
                   <a
-                    href="https://bookrelax.com.au/booking"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={`/booking?service=${treatment.id}`}
                     className="ml-auto font-body text-chi-cinnabar text-[13px] font-medium hover:underline"
                   >
                     Book This →

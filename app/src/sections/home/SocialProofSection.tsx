@@ -5,12 +5,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const reviews = [
-  { name: 'Sarah M.', text: 'After months of chronic back pain, three sessions at Chi Link changed everything. The practitioners truly understand the body.', rating: 5, location: 'Brisbane CBD', rotation: -1.5, wide: true },
-  { name: 'James L.', text: "I was skeptical about acupuncture. Now I recommend Chi Link to everyone I know. Professional, calming, effective.", rating: 5, location: 'Gold Coast', rotation: 0.8, wide: false },
-  { name: 'Emma T.', text: 'The head spa treatment is pure bliss. I float out of there every single time. Best self-care ritual I have ever found.', rating: 5, location: 'Sunshine Coast', rotation: -0.5, wide: false },
-  { name: 'Michael R.', text: "As an athlete, recovery is everything. Chi Link's deep tissue work keeps me performing at my peak.", rating: 5, location: 'Sydney', rotation: 1.2, wide: true },
-  { name: 'Lisa K.', text: 'The herbal medicine consultation was incredibly thorough. I feel more balanced than I have in years.', rating: 5, location: 'Brisbane', rotation: -0.3, wide: false },
-  { name: 'David W.', text: "My partner and I get couples massage here monthly. It is our favourite tradition. The staff makes everyone feel welcome.", rating: 5, location: 'Gold Coast', rotation: 1.8, wide: false },
+  { name: 'Sarah M.', text: 'After months of chronic back pain, three sessions at Chi Link changed everything. The practitioners truly understand the body.', rating: 5, location: 'Brisbane CBD', wide: true },
+  { name: 'James L.', text: "I was skeptical about acupuncture. Now I recommend Chi Link to everyone I know. Professional, calming, effective.", rating: 5, location: 'Gold Coast', wide: false },
+  { name: 'Emma T.', text: 'The head spa treatment is pure bliss. I float out of there every single time. Best self-care ritual I have ever found.', rating: 5, location: 'Sunshine Coast', wide: false },
+  { name: 'Michael R.', text: "As an athlete, recovery is everything. Chi Link's deep tissue work keeps me performing at my peak.", rating: 5, location: 'Sydney', wide: true },
+  { name: 'Lisa K.', text: 'The herbal medicine consultation was incredibly thorough. I feel more balanced than I have in years.', rating: 5, location: 'Brisbane', wide: false },
+  { name: 'David W.', text: "My partner and I get couples massage here monthly. It is our favourite tradition. The staff makes everyone feel welcome.", rating: 5, location: 'Gold Coast', wide: false },
 ];
 
 export default function SocialProofSection() {
@@ -62,7 +62,7 @@ export default function SocialProofSection() {
             <div
               key={i}
               className={`review-card break-inside-avoid p-5 rounded-chi transition-transform duration-300 hover:-translate-y-1 ${review.wide ? 'md:col-span-1' : ''}`}
-              style={{ backgroundColor: '#EBE5D6', transform: `rotate(${review.rotation}deg)` }}
+              style={{ backgroundColor: '#EBE5D6' }}
             >
               <div className="flex gap-0.5 mb-3">
                 {Array.from({ length: review.rating }).map((_, j) => (
