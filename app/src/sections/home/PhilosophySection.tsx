@@ -7,30 +7,21 @@ gsap.registerPlugin(ScrollTrigger);
 const pillars = [
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M6 20 Q 14 8, 22 20" stroke="#B8311F" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-        <path d="M22 20 L 18 16 M 22 20 L 26 16" stroke="#B8311F" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
+      <span style={{ fontSize: '30px', color: '#B8311F', lineHeight: 1, display: 'block', fontFamily: 'serif' }}>復</span>
     ),
     title: 'Restore',
     description: 'Muscle tension, chronic pain, fatigue',
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <line x1="6" y1="10" x2="22" y2="10" stroke="#B8311F" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="10" y1="18" x2="18" y2="18" stroke="#B8311F" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
+      <span style={{ fontSize: '30px', color: '#B8311F', lineHeight: 1, display: 'block', fontFamily: 'serif' }}>衡</span>
     ),
     title: 'Balance',
     description: 'Nervous system, immunity, hormonal harmony',
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <circle cx="14" cy="14" r="8" stroke="#B8311F" strokeWidth="1.5" />
-        <path d="M18 10 L 10 18" stroke="#B8311F" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
+      <span style={{ fontSize: '30px', color: '#B8311F', lineHeight: 1, display: 'block', fontFamily: 'serif' }}>新</span>
     ),
     title: 'Renew',
     description: 'Circulation, cellular repair, deep relaxation',

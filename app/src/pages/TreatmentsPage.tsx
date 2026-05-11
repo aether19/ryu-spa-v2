@@ -43,24 +43,26 @@ const treatments = [
   },
 ];
 
+// Circles calibrated to the body image (800×1200 px, displayed in a 2:3 container)
+// viewBox "0 0 200 300" matches the 2:3 aspect ratio exactly
 const bodyRegions = [
-  { id: 'head', label: 'Head', cx: 100, cy: 40, r: 25 },
-  { id: 'neck', label: 'Neck', cx: 100, cy: 75, r: 12 },
-  { id: 'shoulders', label: 'Shoulders', cx: 100, cy: 95, r: 30 },
-  { id: 'back', label: 'Back', cx: 100, cy: 140, r: 35 },
-  { id: 'arms', label: 'Arms', cx: 55, cy: 130, r: 20 },
-  { id: 'legs', label: 'Legs', cx: 100, cy: 220, r: 30 },
-  { id: 'feet', label: 'Feet', cx: 100, cy: 310, r: 20 },
+  { id: 'head',      label: 'Head',      cx: 100, cy: 23,  r: 20 },
+  { id: 'neck',      label: 'Neck',      cx: 100, cy: 46,  r: 10 },
+  { id: 'shoulders', label: 'Shoulders', cx: 100, cy: 63,  r: 42 },
+  { id: 'back',      label: 'Back',      cx: 100, cy: 100, r: 38 },
+  { id: 'arms',      label: 'Arms',      cx: 38,  cy: 110, r: 20 },
+  { id: 'legs',      label: 'Legs',      cx: 100, cy: 200, r: 42 },
+  { id: 'feet',      label: 'Feet',      cx: 100, cy: 278, r: 18 },
 ];
 
 const tooltipMap: Record<string, { name: string; benefit: string }> = {
-  head: { name: 'Head Spa Therapy', benefit: 'Calm the mind, restore clarity' },
-  neck: { name: 'Deep Tissue Massage', benefit: 'Release weeks of carried tension' },
-  shoulders: { name: 'Deep Tissue Massage', benefit: 'Targeted shoulder relief' },
-  back: { name: 'Acupuncture', benefit: 'Restore flow to blocked pathways' },
-  arms: { name: 'Cupping Therapy', benefit: 'Draw out stagnation' },
-  legs: { name: 'Reflexology', benefit: 'Balance through the soles' },
-  feet: { name: 'Reflexology', benefit: 'Balance through the soles' },
+  head:      { name: 'Head Spa Therapy',      benefit: 'Calm the mind, restore clarity' },
+  neck:      { name: 'Deep Tissue Massage',   benefit: 'Release weeks of carried tension' },
+  shoulders: { name: 'Deep Tissue Massage',   benefit: 'Targeted shoulder relief' },
+  back:      { name: 'Acupuncture',           benefit: 'Restore flow to blocked pathways' },
+  arms:      { name: 'Cupping Therapy',       benefit: 'Draw out stagnation' },
+  legs:      { name: 'Reflexology',           benefit: 'Balance through the soles' },
+  feet:      { name: 'Reflexology',           benefit: 'Balance through the soles' },
 };
 
 export default function TreatmentsPage() {
@@ -84,7 +86,7 @@ export default function TreatmentsPage() {
     setHoveredRegion(regionId);
     const data = tooltipMap[regionId];
     if (data) {
-      setTooltip({ x: e.clientX, y: e.clientY - 60, text: `${data.name} — ${data.benefit}` });
+      setTooltip({ x: e.clientX + 14, y: e.clientY - 44, text: `${data.name} — ${data.benefit}` });
     }
   };
 
@@ -107,43 +109,69 @@ export default function TreatmentsPage() {
       <section className="py-16 lg:py-24" style={{ backgroundColor: '#F5F0E3' }}>
         <div className="max-w-[1280px] mx-auto px-6 lg:px-10">
           <div className="reveal-anim flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-            {/* SVG Body - Desktop */}
-            <div className="hidden lg:block relative flex-shrink-0">
-              <svg width="200" height="380" viewBox="0 0 200 380">
-                <ellipse cx="100" cy="45" rx="28" ry="32" fill="none" stroke="#CEC5B0" strokeWidth="0.8" />
-                <path d="M85 75 Q100 70 115 75 L120 100 Q100 95 80 100 Z" fill="none" stroke="#CEC5B0" strokeWidth="0.8" />
-                <path d="M80 100 Q60 110 55 140 L50 200 Q100 210 150 200 L145 140 Q140 110 120 100 Z" fill="none" stroke="#CEC5B0" strokeWidth="0.8" />
-                <path d="M55 120 Q30 140 25 180 Q20 200 30 220" fill="none" stroke="#CEC5B0" strokeWidth="0.8" />
-                <path d="M145 120 Q170 140 175 180 Q180 200 170 220" fill="none" stroke="#CEC5B0" strokeWidth="0.8" />
-                <path d="M70 205 Q65 250 60 300 Q55 340 65 370" fill="none" stroke="#CEC5B0" strokeWidth="0.8" />
-                <path d="M130 205 Q135 250 140 300 Q145 340 135 370" fill="none" stroke="#CEC5B0" strokeWidth="0.8" />
 
-                {bodyRegions.map((region) => {
-                  const isHovered = hoveredRegion === region.id;
-                  return (
-                    <g
-                      key={region.id}
-                      className="cursor-pointer"
-                      onMouseEnter={(e) => handleRegionHover(region.id, e)}
-                      onMouseLeave={() => { setHoveredRegion(null); setTooltip(null); }}
-                      onMouseMove={(e) => {
-                        if (hoveredRegion === region.id) {
-                          const data = tooltipMap[region.id];
-                          if (data) setTooltip({ x: e.clientX + 10, y: e.clientY - 40, text: `${data.name} — ${data.benefit}` });
-                        }
-                      }}
-                    >
-                      <circle cx={region.cx} cy={region.cy} r={region.r} fill={isHovered ? 'rgba(184, 49, 31, 0.12)' : 'transparent'} stroke={isHovered ? '#B8311F' : 'transparent'} strokeWidth="1" className="transition-all duration-300" />
-                    </g>
-                  );
-                })}
-              </svg>
+            {/* Body Image with hover overlay — Desktop */}
+            <div className="hidden lg:block relative flex-shrink-0" style={{ width: '240px' }}>
+              {/* paddingBottom: 150% = 3/2 × 100% → height is 1.5× the width → maintains 2:3 ratio */}
+              <div style={{ position: 'relative', paddingBottom: '150%' }}>
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets%2Fd10e1c74920a4c19987eb605d5fcf4d5%2F737d2465c94b4265ab9715fc252de96d?format=webp&width=800&height=1200"
+                  alt="Body diagram"
+                  style={{
+                    position: 'absolute', inset: 0,
+                    width: '100%', height: '100%',
+                    objectFit: 'fill',
+                    filter: 'sepia(8%) contrast(0.9) brightness(1.05)',
+                  }}
+                />
+                {/* SVG overlay with viewBox matching image 2:3 ratio (200 × 300) */}
+                <svg
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+                  viewBox="0 0 200 300"
+                >
+                  {bodyRegions.map((region) => {
+                    const isHovered = hoveredRegion === region.id;
+                    return (
+                      <g
+                        key={region.id}
+                        className="cursor-pointer"
+                        onMouseEnter={(e) => handleRegionHover(region.id, e)}
+                        onMouseLeave={() => { setHoveredRegion(null); setTooltip(null); }}
+                        onMouseMove={(e) => {
+                          if (hoveredRegion === region.id) {
+                            const data = tooltipMap[region.id];
+                            if (data) setTooltip({ x: e.clientX + 14, y: e.clientY - 44, text: `${data.name} — ${data.benefit}` });
+                          }
+                        }}
+                      >
+                        <circle
+                          cx={region.cx}
+                          cy={region.cy}
+                          r={region.r}
+                          fill={isHovered ? 'rgba(184, 49, 31, 0.15)' : 'transparent'}
+                          stroke={isHovered ? '#B8311F' : 'transparent'}
+                          strokeWidth="1.5"
+                          className="transition-all duration-300"
+                        />
+                      </g>
+                    );
+                  })}
+                </svg>
 
-              {tooltip && (
-                <div className="fixed z-50 px-4 py-2 rounded-chi pointer-events-none" style={{ backgroundColor: '#1A1208', border: '1px solid rgba(201, 144, 58, 0.2)', left: tooltip.x, top: tooltip.y }}>
-                  <p className="font-body text-chi-parchment text-xs whitespace-nowrap">{tooltip.text}</p>
-                </div>
-              )}
+                {tooltip && (
+                  <div
+                    className="fixed z-50 px-4 py-2 rounded-chi pointer-events-none"
+                    style={{
+                      backgroundColor: '#1A1208',
+                      border: '1px solid rgba(201, 144, 58, 0.2)',
+                      left: tooltip.x,
+                      top: tooltip.y,
+                    }}
+                  >
+                    <p className="font-body text-chi-parchment text-xs whitespace-nowrap">{tooltip.text}</p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Legend */}
@@ -166,7 +194,9 @@ export default function TreatmentsPage() {
                   </div>
                 ))}
               </div>
-              <p className="font-body text-chi-smoke text-[13px] mt-6"><a href="#all-treatments" className="text-chi-cinnabar hover:underline">Or browse all treatments below ↓</a></p>
+              <p className="font-body text-chi-smoke text-[13px] mt-6">
+                <a href="#all-treatments" className="text-chi-cinnabar hover:underline">Or browse all treatments below ↓</a>
+              </p>
             </div>
           </div>
         </div>

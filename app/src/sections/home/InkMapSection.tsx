@@ -14,25 +14,26 @@ interface Location {
   cluster: string;
 }
 
+// Coordinates calculated against the actual SVG viewBox (0 0 674.71 628.37)
+// Reference: Cape Byron (easternmost tip) ≈ SVG(671.96, 332.10) = 153.63°E, 28.63°S
+// Scale: ~15.56 SVG units/° longitude, ~19.29 SVG units/° latitude-south
 const locations: Location[] = [
-  { id: 'anzac-square', name: 'Anzac Square', address: 'Brisbane CBD, QLD', cx: 480, cy: 208, rating: '4.9', cluster: 'brisbane' },
-  { id: 'queens-plaza', name: 'Queens Plaza', address: 'Brisbane CBD, QLD', cx: 485, cy: 203, rating: '4.8', cluster: 'brisbane' },
-  { id: 'garden-city', name: 'Garden City', address: 'Upper Mt Gravatt, QLD', cx: 490, cy: 215, rating: '4.9', cluster: 'brisbane' },
-  { id: 'indooroopilly', name: 'Indooroopilly', address: 'Indooroopilly, QLD', cx: 475, cy: 212, rating: '4.7', cluster: 'brisbane' },
-  { id: 'chermside', name: 'Westfield Chermside', address: 'Chermside, QLD', cx: 488, cy: 200, rating: '4.8', cluster: 'brisbane' },
-  { id: 'robina', name: 'Robina Town Centre', address: 'Robina, QLD', cx: 495, cy: 238, rating: '4.7', cluster: 'gold-coast' },
-  { id: 'pacific-fair', name: 'Pacific Fair', address: 'Broadbeach, QLD', cx: 497, cy: 242, rating: '4.8', cluster: 'gold-coast' },
-  { id: 'maroochydore', name: 'Sunshine Plaza', address: 'Maroochydore, QLD', cx: 485, cy: 182, rating: '4.9', cluster: 'sunshine-coast' },
-  { id: 'kawana', name: 'Kawana Waters', address: 'Bokarina, QLD', cx: 488, cy: 185, rating: '4.8', cluster: 'sunshine-coast' },
-  { id: 'sydney-cbd', name: 'Westfield Sydney', address: 'Sydney CBD, NSW', cx: 530, cy: 310, rating: '4.8', cluster: 'sydney' },
-  { id: 'chatswood', name: 'Chatswood Chase', address: 'Chatswood, NSW', cx: 535, cy: 302, rating: '4.7', cluster: 'sydney' },
-  { id: 'parramatta', name: 'Westfield Parramatta', address: 'Parramatta, NSW', cx: 528, cy: 305, rating: '4.8', cluster: 'sydney' },
-  { id: 'ipswich', name: 'Riverlink', address: 'Ipswich, QLD', cx: 472, cy: 215, rating: '4.7', cluster: 'brisbane' },
-  { id: 'toowoomba', name: 'Grand Central', address: 'Toowoomba, QLD', cx: 465, cy: 220, rating: '4.8', cluster: 'brisbane' },
-  { id: 'broadbeach', name: 'The Oasis', address: 'Broadbeach, QLD', cx: 495, cy: 240, rating: '4.7', cluster: 'gold-coast' },
+  { id: 'anzac-square',  name: 'Anzac Square',         address: 'Brisbane CBD, QLD',      cx: 662, cy: 310, rating: '4.9', cluster: 'brisbane' },
+  { id: 'queens-plaza',  name: 'Queens Plaza',          address: 'Brisbane CBD, QLD',      cx: 664, cy: 307, rating: '4.8', cluster: 'brisbane' },
+  { id: 'garden-city',   name: 'Garden City',           address: 'Upper Mt Gravatt, QLD',  cx: 663, cy: 312, rating: '4.9', cluster: 'brisbane' },
+  { id: 'indooroopilly', name: 'Indooroopilly',         address: 'Indooroopilly, QLD',     cx: 659, cy: 310, rating: '4.7', cluster: 'brisbane' },
+  { id: 'chermside',     name: 'Westfield Chermside',   address: 'Chermside, QLD',         cx: 663, cy: 305, rating: '4.8', cluster: 'brisbane' },
+  { id: 'robina',        name: 'Robina Town Centre',    address: 'Robina, QLD',            cx: 668, cy: 321, rating: '4.7', cluster: 'gold-coast' },
+  { id: 'pacific-fair',  name: 'Pacific Fair',          address: 'Broadbeach, QLD',        cx: 669, cy: 324, rating: '4.8', cluster: 'gold-coast' },
+  { id: 'maroochydore',  name: 'Sunshine Plaza',        address: 'Maroochydore, QLD',      cx: 663, cy: 291, rating: '4.9', cluster: 'sunshine-coast' },
+  { id: 'kawana',        name: 'Kawana Waters',         address: 'Bokarina, QLD',          cx: 663, cy: 295, rating: '4.8', cluster: 'sunshine-coast' },
+  { id: 'sydney-cbd',    name: 'Westfield Sydney',      address: 'Sydney CBD, NSW',        cx: 634, cy: 433, rating: '4.8', cluster: 'sydney' },
+  { id: 'chatswood',     name: 'Chatswood Chase',       address: 'Chatswood, NSW',         cx: 634, cy: 430, rating: '4.7', cluster: 'sydney' },
+  { id: 'parramatta',    name: 'Westfield Parramatta',  address: 'Parramatta, NSW',        cx: 631, cy: 432, rating: '4.8', cluster: 'sydney' },
+  { id: 'ipswich',       name: 'Riverlink',             address: 'Ipswich, QLD',           cx: 657, cy: 313, rating: '4.7', cluster: 'brisbane' },
+  { id: 'toowoomba',     name: 'Grand Central',         address: 'Toowoomba, QLD',         cx: 646, cy: 312, rating: '4.8', cluster: 'brisbane' },
+  { id: 'broadbeach',    name: 'The Oasis',             address: 'Broadbeach, QLD',        cx: 670, cy: 322, rating: '4.7', cluster: 'gold-coast' },
 ];
-
-const ausOutline = "M120,280 Q130,260 150,240 Q170,210 200,190 Q230,170 260,160 Q290,150 320,145 Q350,142 380,140 Q410,138 440,140 Q470,142 500,148 Q530,155 550,170 Q570,185 585,205 Q600,225 610,248 Q620,270 625,295 Q630,320 628,345 Q626,370 618,390 Q610,410 598,425 Q586,440 570,450 Q554,460 535,465 Q516,470 498,468 Q480,466 465,458 Q450,450 438,438 Q426,426 418,410 Q410,394 405,376 Q400,358 398,340 Q396,322 395,305 Q394,288 392,272 Q390,256 386,242 Q382,228 375,216 Q368,204 358,195 Q348,186 336,180 Q324,174 310,172 Q296,170 282,172 Q268,174 254,180 Q240,186 228,196 Q216,206 206,218 Q196,230 188,244 Q180,258 174,272 Q168,286 162,300 Q156,314 148,326 Q140,338 130,348 Q120,358 110,365 Q100,372 92,378 Q84,384 78,390 Q72,396 68,402 Q64,408 62,414 Q60,420 62,426 Q64,432 68,436 Q72,440 78,442 Q84,444 90,442 Q96,440 100,436 Q104,432 106,426 Q108,420 110,414 Q112,408 115,402 Q118,396 120,390 Q122,384 122,378 Q122,372 120,366 Q118,360 116,354 Q114,348 114,342 Q114,336 116,330 Q118,324 120,318 Q122,312 122,306 Q122,300 120,294 Q118,288 116,282 Q114,276 114,270 Q114,264 116,258 Q118,252 120,280 Z";
 
 export default function InkMapSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -80,76 +81,81 @@ export default function InkMapSection() {
           </h2>
         </div>
 
-        {/* Desktop: Full Australia SVG Map */}
-        <div className="hidden lg:block relative w-[70%] mx-auto" style={{ paddingBottom: '55%' }}>
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 700 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Australia continent outline */}
-            <path d={ausOutline} stroke="rgba(201, 144, 58, 0.25)" strokeWidth="0.8" fill="none" />
-            {/* State borders */}
-            <path d="M320,145 Q 330,180, 340,220 Q 350,260, 345,300 Q 340,340, 330,380" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" fill="none" />
-            <path d="M440,140 Q 445,200, 450,260 Q 455,320, 445,380" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" fill="none" />
-            <path d="M200,190 Q 260,185, 320,180 Q 380,175, 440,170" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" fill="none" />
-            <path d="M395,305 Q 420,310, 445,315 Q 470,320, 500,325" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" fill="none" />
-            {/* TAS */}
-            <ellipse cx="540" cy="440" rx="18" ry="12" stroke="rgba(201, 144, 58, 0.2)" strokeWidth="0.6" fill="none" />
-            {/* State labels */}
-            <text x="430" y="260" fill="rgba(255,255,255,0.15)" fontSize="9" fontFamily="Syne">SA</text>
-            <text x="340" y="210" fill="rgba(255,255,255,0.15)" fontSize="9" fontFamily="Syne">NT</text>
-            <text x="250" y="350" fill="rgba(255,255,255,0.15)" fontSize="9" fontFamily="Syne">WA</text>
-            <text x="485" y="250" fill="rgba(255,255,255,0.15)" fontSize="9" fontFamily="Syne">QLD</text>
-            <text x="510" y="340" fill="rgba(255,255,255,0.15)" fontSize="9" fontFamily="Syne">NSW</text>
-            <text x="470" y="390" fill="rgba(255,255,255,0.15)" fontSize="9" fontFamily="Syne">VIC</text>
-            <text x="535" y="450" fill="rgba(255,255,255,0.15)" fontSize="8" fontFamily="Syne">TAS</text>
-
-            {/* Location dots */}
-            {locations.map((loc) => (
-              <g
-                key={loc.id}
-                className="location-dot"
-                style={{ transformOrigin: `${loc.cx}px ${loc.cy}px`, cursor: 'pointer' }}
-                onMouseEnter={() => setActiveLocation(loc)}
-                onMouseLeave={() => setActiveLocation(null)}
-              >
-                <circle cx={loc.cx} cy={loc.cy} r="10" fill="none" stroke="#B8311F" strokeWidth="0.5" opacity="0.2">
-                  <animate attributeName="r" values="7;12;7" dur="2.5s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.3;0;0.3" dur="2.5s" repeatCount="indefinite" />
-                </circle>
-                <circle cx={loc.cx} cy={loc.cy} r="4" fill="#B8311F" />
-              </g>
-            ))}
-
-            {/* International dot (lighter) */}
-            <g style={{ cursor: 'pointer' }} onMouseEnter={() => setActiveLocation({ id: 'komodo', name: 'Komodo', address: 'Komodo, Indonesia', cx: 120, cy: 280, rating: '4.9', cluster: 'international' })} onMouseLeave={() => setActiveLocation(null)}>
-              <circle cx="120" cy="280" r="4" fill="#C9903A" opacity="0.7" />
-              <text x="128" y="284" fill="rgba(201, 144, 58, 0.5)" fontSize="8" fontFamily="Syne">(International)</text>
-            </g>
-          </svg>
-
-          {/* Tooltip */}
-          {activeLocation && (
-            <div
-              className="absolute z-10 p-4 rounded-chi"
+        {/* Desktop: Actual Australia SVG Map */}
+        <div className="hidden lg:block" style={{ position: 'relative', maxWidth: '540px', width: '55%', margin: '0 auto' }}>
+          <div style={{ position: 'relative', paddingBottom: '93.13%' }}>
+            {/* Real Australia outline SVG as img */}
+            <img
+              src="/images/MrTim_Australia_Outline.svg"
+              alt="Australia map"
               style={{
-                backgroundColor: '#F5F0E3',
-                border: '1px solid rgba(201, 144, 58, 0.2)',
-                left: `${(activeLocation.cx / 700) * 100}%`,
-                top: `${(activeLocation.cy / 500) * 100}%`,
-                transform: 'translate(-50%, -120%)',
-                minWidth: '200px',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%',
+                filter: 'brightness(0) invert(1)',
+                opacity: 0.28,
               }}
+            />
+
+            {/* Dots overlay — same viewBox as the SVG file */}
+            <svg
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+              viewBox="0 0 674.71 628.37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <h4 className="font-display text-chi-ink text-base mb-0.5">{activeLocation.name}</h4>
-              <p className="font-body text-chi-smoke text-xs mb-2">{activeLocation.address}</p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="#C9903A"><path d="M8 0l2.47 5.01L16 5.81l-4 3.9.94 5.5L8 12.88l-4.94 2.6.94-5.5-4-3.9 5.53-.8z" /></svg>
-                  <span className="font-body text-chi-gold text-xs">{activeLocation.rating}</span>
+              {/* State labels */}
+              <text x="175" y="262" fill="rgba(255,255,255,0.18)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">WA</text>
+              <text x="340" y="170" fill="rgba(255,255,255,0.18)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">NT</text>
+              <text x="390" y="360" fill="rgba(255,255,255,0.18)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">SA</text>
+              <text x="548" y="248" fill="rgba(255,255,255,0.18)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">QLD</text>
+              <text x="560" y="388" fill="rgba(255,255,255,0.18)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">NSW</text>
+              <text x="522" y="476" fill="rgba(255,255,255,0.18)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">VIC</text>
+              <text x="542" y="576" fill="rgba(255,255,255,0.15)" fontSize="9"  fontFamily="Syne, sans-serif" letterSpacing="1">TAS</text>
+
+              {/* Location dots */}
+              {locations.map((loc) => (
+                <g
+                  key={loc.id}
+                  className="location-dot"
+                  style={{ transformOrigin: `${loc.cx}px ${loc.cy}px`, cursor: 'pointer' }}
+                  onMouseEnter={() => setActiveLocation(loc)}
+                  onMouseLeave={() => setActiveLocation(null)}
+                >
+                  <circle cx={loc.cx} cy={loc.cy} r="10" fill="none" stroke="#B8311F" strokeWidth="0.5" opacity="0.2">
+                    <animate attributeName="r" values="7;12;7" dur="2.5s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.3;0;0.3" dur="2.5s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx={loc.cx} cy={loc.cy} r="3.5" fill="#B8311F" />
+                </g>
+              ))}
+            </svg>
+
+            {/* Tooltip */}
+            {activeLocation && (
+              <div
+                className="absolute z-10 p-4 rounded-chi pointer-events-none"
+                style={{
+                  backgroundColor: '#F5F0E3',
+                  border: '1px solid rgba(201, 144, 58, 0.2)',
+                  left: `${(activeLocation.cx / 674.71) * 100}%`,
+                  top: `${(activeLocation.cy / 628.37) * 100}%`,
+                  transform: 'translate(-108%, -120%)',
+                  minWidth: '200px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                }}
+              >
+                <h4 className="font-display text-chi-ink text-base mb-0.5">{activeLocation.name}</h4>
+                <p className="font-body text-chi-smoke text-xs mb-2">{activeLocation.address}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="#C9903A"><path d="M8 0l2.47 5.01L16 5.81l-4 3.9.94 5.5L8 12.88l-4.94 2.6.94-5.5-4-3.9 5.53-.8z" /></svg>
+                    <span className="font-body text-chi-gold text-xs">{activeLocation.rating}</span>
+                  </div>
+                  <a href={`https://bookrelax.com.au/booking?clinic=${activeLocation.id}`} target="_blank" rel="noopener noreferrer" className="font-body text-chi-cinnabar text-xs hover:underline">Book →</a>
                 </div>
-                <a href={`https://bookrelax.com.au/booking?clinic=${activeLocation.id}`} target="_blank" rel="noopener noreferrer" className="font-body text-chi-cinnabar text-xs hover:underline">Book →</a>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Mobile: tab-filtered list */}
