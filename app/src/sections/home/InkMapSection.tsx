@@ -5,46 +5,94 @@ import { Link } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface Location {
+// ─── Data ─────────────────────────────────────────────────────────────────────
+// Geographically close clinics are grouped into clusters so each dot is
+// clearly separated from its neighbours (min ~21 SVG units between centres).
+
+interface ClinicEntry { id: string; name: string; address: string; rating: string; }
+
+interface Cluster {
   id: string;
-  name: string;
-  address: string;
+  label: string;   // area name shown in tooltip header
   cx: number;
   cy: number;
-  rating: string;
-  cluster: string;
+  clinics: ClinicEntry[];
 }
 
-const locations: Location[] = [
-  { id: 'maroochydore',  name: 'Sunshine Plaza',        address: 'Maroochydore, QLD',     cx: 656, cy: 279, rating: '4.9', cluster: 'sunshine-coast' },
-  { id: 'kawana',        name: 'Kawana Waters',          address: 'Bokarina, QLD',          cx: 667, cy: 287, rating: '4.8', cluster: 'sunshine-coast' },
-  { id: 'anzac-square',  name: 'Anzac Square',           address: 'Brisbane CBD, QLD',      cx: 657, cy: 296, rating: '4.9', cluster: 'brisbane' },
-  { id: 'queens-plaza',  name: 'Queens Plaza',           address: 'Brisbane CBD, QLD',      cx: 667, cy: 293, rating: '4.8', cluster: 'brisbane' },
-  { id: 'chermside',     name: 'Westfield Chermside',    address: 'Chermside, QLD',         cx: 651, cy: 303, rating: '4.8', cluster: 'brisbane' },
-  { id: 'garden-city',   name: 'Garden City',            address: 'Upper Mt Gravatt, QLD',  cx: 664, cy: 308, rating: '4.9', cluster: 'brisbane' },
-  { id: 'indooroopilly', name: 'Indooroopilly',          address: 'Indooroopilly, QLD',     cx: 651, cy: 312, rating: '4.7', cluster: 'brisbane' },
-  { id: 'ipswich',       name: 'Riverlink',              address: 'Ipswich, QLD',           cx: 641, cy: 316, rating: '4.7', cluster: 'brisbane' },
-  { id: 'toowoomba',     name: 'Grand Central',          address: 'Toowoomba, QLD',         cx: 627, cy: 313, rating: '4.8', cluster: 'brisbane' },
-  { id: 'robina',        name: 'Robina Town Centre',     address: 'Robina, QLD',            cx: 659, cy: 321, rating: '4.7', cluster: 'gold-coast' },
-  { id: 'pacific-fair',  name: 'Pacific Fair',           address: 'Broadbeach, QLD',        cx: 669, cy: 318, rating: '4.8', cluster: 'gold-coast' },
-  { id: 'broadbeach',    name: 'The Oasis',              address: 'Broadbeach, QLD',        cx: 665, cy: 328, rating: '4.7', cluster: 'gold-coast' },
-  { id: 'sydney-cbd',    name: 'Westfield Sydney',       address: 'Sydney CBD, NSW',        cx: 634, cy: 438, rating: '4.8', cluster: 'sydney' },
-  { id: 'chatswood',     name: 'Chatswood Chase',        address: 'Chatswood, NSW',         cx: 641, cy: 429, rating: '4.7', cluster: 'sydney' },
-  { id: 'parramatta',    name: 'Westfield Parramatta',   address: 'Parramatta, NSW',        cx: 623, cy: 434, rating: '4.8', cluster: 'sydney' },
+const clusters: Cluster[] = [
+  {
+    id: 'sunshine-coast', label: 'Sunshine Coast', cx: 652, cy: 272,
+    clinics: [
+      { id: 'maroochydore', name: 'Sunshine Plaza',  address: 'Maroochydore, QLD', rating: '4.9' },
+      { id: 'kawana',       name: 'Kawana Waters',   address: 'Bokarina, QLD',     rating: '4.8' },
+    ],
+  },
+  {
+    id: 'brisbane-north', label: 'Brisbane North', cx: 635, cy: 285,
+    clinics: [
+      { id: 'chermside', name: 'Westfield Chermside', address: 'Chermside, QLD', rating: '4.8' },
+    ],
+  },
+  {
+    id: 'brisbane-cbd', label: 'Brisbane CBD', cx: 654, cy: 294,
+    clinics: [
+      { id: 'anzac-square', name: 'Anzac Square', address: 'Brisbane CBD, QLD', rating: '4.9' },
+      { id: 'queens-plaza', name: 'Queens Plaza', address: 'Brisbane CBD, QLD', rating: '4.8' },
+    ],
+  },
+  {
+    id: 'toowoomba', label: 'Toowoomba', cx: 607, cy: 309,
+    clinics: [
+      { id: 'toowoomba', name: 'Grand Central', address: 'Toowoomba, QLD', rating: '4.8' },
+    ],
+  },
+  {
+    id: 'brisbane-west', label: 'Brisbane West', cx: 627, cy: 315,
+    clinics: [
+      { id: 'indooroopilly', name: 'Indooroopilly', address: 'Indooroopilly, QLD', rating: '4.7' },
+      { id: 'ipswich',       name: 'Riverlink',     address: 'Ipswich, QLD',       rating: '4.7' },
+    ],
+  },
+  {
+    id: 'brisbane-south', label: 'Brisbane South', cx: 663, cy: 313,
+    clinics: [
+      { id: 'garden-city', name: 'Garden City', address: 'Upper Mt Gravatt, QLD', rating: '4.9' },
+    ],
+  },
+  {
+    id: 'gold-coast', label: 'Gold Coast', cx: 657, cy: 333,
+    clinics: [
+      { id: 'robina',       name: 'Robina Town Centre', address: 'Robina, QLD',     rating: '4.7' },
+      { id: 'pacific-fair', name: 'Pacific Fair',       address: 'Broadbeach, QLD', rating: '4.8' },
+      { id: 'broadbeach',   name: 'The Oasis',          address: 'Broadbeach, QLD', rating: '4.7' },
+    ],
+  },
+  {
+    id: 'sydney', label: 'Sydney', cx: 629, cy: 434,
+    clinics: [
+      { id: 'sydney-cbd', name: 'Westfield Sydney',     address: 'Sydney CBD, NSW', rating: '4.8' },
+      { id: 'chatswood',  name: 'Chatswood Chase',      address: 'Chatswood, NSW',  rating: '4.7' },
+      { id: 'parramatta', name: 'Westfield Parramatta', address: 'Parramatta, NSW', rating: '4.8' },
+    ],
+  },
 ];
 
+// Flat list still used for mobile
+const allClinics = clusters.flatMap(c => c.clinics.map(cl => ({ ...cl, cluster: c.id })));
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export default function InkMapSection() {
-  const sectionRef       = useRef<HTMLDivElement>(null);
-  const headerRef        = useRef<HTMLDivElement>(null);
-  const [hoveredLocation, setHoveredLocation] = useState<Location | null>(null);
-  const [lockedLocation,  setLockedLocation]  = useState<Location | null>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const headerRef  = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState<Cluster | null>(null);
+  const [locked,  setLocked]  = useState<Cluster | null>(null);
 
-  // What to display: locked takes priority over hovered
-  const displayLocation = lockedLocation ?? hoveredLocation;
+  const display = locked ?? hovered;
 
-  const handleDotClick = (loc: Location, e: React.MouseEvent) => {
+  const handleDotClick = (c: Cluster, e: React.MouseEvent) => {
     e.stopPropagation();
-    setLockedLocation(prev => prev?.id === loc.id ? null : loc);
+    setLocked(prev => prev?.id === c.id ? null : c);
   };
 
   useEffect(() => {
@@ -56,10 +104,10 @@ export default function InkMapSection() {
       });
       if (t.scrollTrigger) triggers.push(t.scrollTrigger);
     }
-    const dots = sectionRef.current?.querySelectorAll('.location-dot');
+    const dots = sectionRef.current?.querySelectorAll('.loc-dot');
     if (dots) {
       const t = gsap.fromTo(dots, { scale: 0, opacity: 0 }, {
-        scale: 1, opacity: 1, duration: 0.4, stagger: 0.05, ease: 'back.out(1.7)',
+        scale: 1, opacity: 1, duration: 0.4, stagger: 0.07, ease: 'back.out(1.7)',
         scrollTrigger: { trigger: sectionRef.current, start: 'top 60%', toggleActions: 'play none none none' },
       });
       if (t.scrollTrigger) triggers.push(t.scrollTrigger);
@@ -72,13 +120,13 @@ export default function InkMapSection() {
       ref={sectionRef}
       className="relative py-24 lg:py-36 overflow-hidden"
       style={{ backgroundColor: '#0D0A06' }}
-      onClick={() => setLockedLocation(null)}
+      onClick={() => setLocked(null)}
     >
       <div className="max-w-[1280px] mx-auto px-6 lg:px-10">
 
         <div ref={headerRef} className="text-center mb-12 lg:mb-16 opacity-0">
           <span className="label-style text-chi-cinnabar block mb-3">FIND YOUR NEAREST CLINIC</span>
-          <h2 className="font-display text-chi-parchment" style={{ fontSize: 'clamp(40px, 4.5vw, 64px)', lineHeight: 0.95, letterSpacing: '-0.03em' }}>
+          <h2 className="font-display text-chi-parchment" style={{ fontSize: 'clamp(40px,4.5vw,64px)', lineHeight: 0.95, letterSpacing: '-0.03em' }}>
             23 locations,<br />one philosophy.
           </h2>
         </div>
@@ -91,95 +139,124 @@ export default function InkMapSection() {
         >
           <div style={{ position: 'relative', paddingBottom: '93.13%' }}>
 
-            {/* Real Australia SVG outline */}
             <img
               src="/images/MrTim_Australia_Outline.svg"
               alt="Australia map"
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', filter: 'brightness(0) invert(1)', opacity: 0.28 }}
             />
 
-            {/* Dot overlay — viewBox matches SVG file */}
             <svg
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
               viewBox="0 0 674.71 628.37"
               fill="none"
             >
               {/* State labels */}
-              <text x="168" y="258" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">WA</text>
-              <text x="338" y="168" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">NT</text>
-              <text x="386" y="358" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">SA</text>
-              <text x="546" y="246" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">QLD</text>
-              <text x="558" y="385" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">NSW</text>
-              <text x="520" y="474" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">VIC</text>
-              <text x="540" y="574" fill="rgba(255,255,255,0.13)" fontSize="9"  fontFamily="Syne, sans-serif" letterSpacing="1">TAS</text>
+              <text x="168" y="258" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">WA</text>
+              <text x="338" y="168" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">NT</text>
+              <text x="386" y="358" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">SA</text>
+              <text x="546" y="246" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">QLD</text>
+              <text x="558" y="385" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">NSW</text>
+              <text x="520" y="474" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne,sans-serif" letterSpacing="1">VIC</text>
+              <text x="540" y="574" fill="rgba(255,255,255,0.13)" fontSize="9"  fontFamily="Syne,sans-serif" letterSpacing="1">TAS</text>
 
-              {locations.map((loc) => {
-                const isLocked  = lockedLocation?.id === loc.id;
-                const isActive  = isLocked || hoveredLocation?.id === loc.id;
+              {clusters.map(c => {
+                const isLocked  = locked?.id === c.id;
+                const isActive  = isLocked || hovered?.id === c.id;
+                const multi     = c.clinics.length > 1;
+
                 return (
                   <g
-                    key={loc.id}
-                    className="location-dot"
-                    style={{ transformOrigin: `${loc.cx}px ${loc.cy}px`, cursor: 'pointer' }}
-                    onMouseEnter={() => setHoveredLocation(loc)}
-                    onMouseLeave={() => setHoveredLocation(null)}
-                    onClick={e => handleDotClick(loc, e)}
+                    key={c.id}
+                    className="loc-dot"
+                    style={{ transformOrigin: `${c.cx}px ${c.cy}px`, cursor: 'pointer' }}
+                    onMouseEnter={() => setHovered(c)}
+                    onMouseLeave={() => setHovered(null)}
+                    onClick={e => handleDotClick(c, e)}
                   >
-                    {/* Animated pulse ring */}
-                    <circle cx={loc.cx} cy={loc.cy} r="9" fill="none" stroke="#B8311F" strokeWidth="0.6" opacity="0">
-                      <animate attributeName="r"       values="9;18;9"    dur="2.8s" repeatCount="indefinite" />
+                    {/* Pulse ring */}
+                    <circle cx={c.cx} cy={c.cy} r="9" fill="none" stroke="#B8311F" strokeWidth="0.6" opacity="0">
+                      <animate attributeName="r"       values="9;20;9"    dur="2.8s" repeatCount="indefinite" />
                       <animate attributeName="opacity" values="0.4;0;0.4" dur="2.8s" repeatCount="indefinite" />
                     </circle>
-                    {/* Locked-state outer ring */}
-                    {isLocked && (
-                      <circle cx={loc.cx} cy={loc.cy} r="9" fill="none" stroke="#B8311F" strokeWidth="1.5" opacity="0.6" />
-                    )}
-                    {/* Solid dot */}
+                    {/* Lock ring */}
+                    {isLocked && <circle cx={c.cx} cy={c.cy} r="11" fill="none" stroke="#B8311F" strokeWidth="1.5" opacity="0.6" />}
+                    {/* Solid dot — slightly larger for multi-location clusters */}
                     <circle
-                      cx={loc.cx} cy={loc.cy} r="7"
+                      cx={c.cx} cy={c.cy}
+                      r={multi ? 8 : 6}
                       fill={isActive ? '#FF4D2E' : '#B8311F'}
-                      stroke="rgba(245,240,227,0.3)"
-                      strokeWidth="0.8"
+                      stroke="rgba(245,240,227,0.35)"
+                      strokeWidth="1"
                       style={{ transition: 'fill 0.15s' }}
                     />
+                    {/* Count badge for multi-clinic clusters */}
+                    {multi && (
+                      <text
+                        x={c.cx} y={c.cy + 4}
+                        textAnchor="middle"
+                        fill="#F5F0E3"
+                        fontSize="7"
+                        fontFamily="Syne,sans-serif"
+                        fontWeight="600"
+                        style={{ pointerEvents: 'none', userSelect: 'none' }}
+                      >
+                        {c.clinics.length}
+                      </text>
+                    )}
                   </g>
                 );
               })}
             </svg>
 
-            {/* ── Tooltip — original simple card design ── */}
-            {displayLocation && (
+            {/* Tooltip */}
+            {display && (
               <div
-                className="absolute z-10 p-4 rounded-chi"
+                className="absolute z-10 rounded-chi"
                 style={{
                   backgroundColor: '#F5F0E3',
-                  border: '1px solid rgba(201, 144, 58, 0.2)',
-                  left: `${(displayLocation.cx / 674.71) * 100}%`,
-                  top:  `${(displayLocation.cy / 628.37) * 100}%`,
-                  transform: 'translate(-50%, -120%)',
-                  minWidth: '200px',
+                  border: '1px solid rgba(201,144,58,0.2)',
+                  left: `${(display.cx / 674.71) * 100}%`,
+                  top:  `${(display.cy / 628.37) * 100}%`,
+                  transform: 'translate(-50%, -115%)',
+                  minWidth: '220px',
+                  maxWidth: '260px',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-                  pointerEvents: lockedLocation ? 'auto' : 'none',
+                  pointerEvents: locked ? 'auto' : 'none',
                 }}
                 onClick={e => e.stopPropagation()}
               >
-                <h4 className="font-display text-chi-ink text-base mb-0.5">{displayLocation.name}</h4>
-                <p className="font-body text-chi-smoke text-xs mb-2">{displayLocation.address}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    {[1,2,3,4,5].map(s => (
-                      <svg key={s} width="12" height="12" viewBox="0 0 16 16" fill="#C9903A">
-                        <path d="M8 0l2.47 5.01L16 5.81l-4 3.9.94 5.5L8 12.88l-4.94 2.6.94-5.5-4-3.9 5.53-.8z" />
-                      </svg>
-                    ))}
-                    <span className="font-body text-xs ml-1" style={{ color: '#C9903A' }}>{displayLocation.rating}</span>
-                  </div>
-                  <Link
-                    to={`/booking?clinic=${displayLocation.id}`}
-                    className="font-body text-chi-cinnabar text-xs hover:underline"
-                  >
-                    Book →
-                  </Link>
+                {/* Header */}
+                <div className="flex items-center justify-between px-4 pt-3 pb-2" style={{ borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+                  <span className="font-display text-chi-ink text-sm">{display.label}</span>
+                  <span className="font-body text-chi-mist text-xs">{display.clinics.length} {display.clinics.length === 1 ? 'location' : 'locations'}</span>
+                </div>
+                {/* Clinic list */}
+                <div className="py-1">
+                  {display.clinics.map((cl, i) => (
+                    <div
+                      key={cl.id}
+                      className="flex items-center justify-between px-4 py-2"
+                      style={{ borderBottom: i < display.clinics.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}
+                    >
+                      <div>
+                        <p className="font-display text-chi-ink text-xs leading-tight">{cl.name}</p>
+                        <div className="flex items-center gap-0.5 mt-0.5">
+                          {[1,2,3,4,5].map(s => (
+                            <svg key={s} width="8" height="8" viewBox="0 0 16 16" fill="#C9903A">
+                              <path d="M8 0l2.47 5.01L16 5.81l-4 3.9.94 5.5L8 12.88l-4.94 2.6.94-5.5-4-3.9 5.53-.8z"/>
+                            </svg>
+                          ))}
+                          <span className="font-body text-[10px] ml-0.5" style={{ color: '#C9903A' }}>{cl.rating}</span>
+                        </div>
+                      </div>
+                      <Link
+                        to={`/booking?clinic=${cl.id}`}
+                        className="font-body text-chi-cinnabar text-xs hover:underline ml-3 flex-shrink-0"
+                      >
+                        Book →
+                      </Link>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -199,16 +276,25 @@ export default function InkMapSection() {
   );
 }
 
+// ─── Mobile list ──────────────────────────────────────────────────────────────
+
 function MobileLocationList() {
   const [activeTab, setActiveTab] = useState('all');
   const tabs = [
     { key: 'all',            label: 'All'            },
-    { key: 'brisbane',       label: 'Brisbane'       },
+    { key: 'brisbane-cbd',   label: 'Brisbane'       },
     { key: 'gold-coast',     label: 'Gold Coast'     },
     { key: 'sunshine-coast', label: 'Sunshine Coast' },
     { key: 'sydney',         label: 'Sydney'         },
   ];
-  const filtered = activeTab === 'all' ? locations : locations.filter(l => l.cluster === activeTab);
+
+  const filtered = activeTab === 'all'
+    ? allClinics
+    : allClinics.filter(l => {
+        if (activeTab === 'brisbane-cbd')
+          return ['brisbane-cbd','brisbane-north','brisbane-west','brisbane-south','toowoomba'].includes(l.cluster);
+        return l.cluster === activeTab;
+      });
 
   return (
     <div>
