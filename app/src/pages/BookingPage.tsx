@@ -2,34 +2,51 @@ import { useState, useEffect } from 'react';
 import { format, startOfMonth, getDay, isSameMonth, isSameDay, isBefore, addMonths, subMonths } from 'date-fns';
 import { Link } from 'react-router-dom';
 
+// ─── Palette (light theme) ───────────────────────────────────────────────────
+const C = {
+  bg:         '#FAF7F2',   // warm off-white page bg
+  surface:    '#FFFFFF',   // card / input bg
+  surfaceAlt: '#F0EBE0',   // slightly tinted surface
+  border:     'rgba(0,0,0,0.09)',
+  borderFocus:'rgba(184,49,31,0.45)',
+  ink:        '#1A1208',   // primary text
+  smoke:      '#5A4E45',   // secondary text
+  mist:       '#8C7E74',   // tertiary / labels
+  accent:     '#B8311F',   // cinnabar
+  accentHov:  '#9B2518',
+  accentBg:   'rgba(184,49,31,0.07)',
+  gold:       '#B07C28',
+  divider:    'rgba(0,0,0,0.07)',
+};
+
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const services = [
-  { id: 'acupuncture',  name: 'Acupuncture',            char: '针', duration: '30 – 60 min', price: 'From $65',  desc: 'Restore flow to blocked meridian pathways' },
-  { id: 'deep-tissue',  name: 'Deep Tissue Massage',     char: '推', duration: '30 – 90 min', price: 'From $55',  desc: 'Release chronic muscle tension and tightness' },
-  { id: 'head-spa',     name: 'Head Spa Therapy',        char: '頭', duration: '45 – 60 min', price: 'From $75',  desc: 'Calm the mind and restore mental clarity' },
-  { id: 'cupping',      name: 'Cupping Therapy',         char: '罐', duration: '20 – 45 min', price: 'From $45',  desc: 'Improve circulation and accelerate recovery' },
-  { id: 'herbal',       name: 'Herbal Medicine',         char: '藥', duration: 'Consultation', price: 'From $50', desc: 'Personalised herbal formulations for your constitution' },
-  { id: 'reflexology',  name: 'Reflexology',             char: '足', duration: '30 – 60 min', price: 'From $50',  desc: 'Balance the body through pressure points on the feet' },
-  { id: 'couples',      name: 'Couples Massage',         char: '双', duration: '60 – 90 min', price: 'From $110', desc: 'Shared relaxation experience for you and your partner' },
+  { id: 'acupuncture', name: 'Acupuncture',          char: '针', duration: '30 – 60 min', price: 'From $65',  desc: 'Restore flow to blocked meridian pathways' },
+  { id: 'deep-tissue', name: 'Deep Tissue Massage',   char: '推', duration: '30 – 90 min', price: 'From $55',  desc: 'Release chronic muscle tension and tightness' },
+  { id: 'head-spa',    name: 'Head Spa Therapy',      char: '頭', duration: '45 – 60 min', price: 'From $75',  desc: 'Calm the mind and restore mental clarity' },
+  { id: 'cupping',     name: 'Cupping Therapy',       char: '罐', duration: '20 – 45 min', price: 'From $45',  desc: 'Improve circulation and accelerate recovery' },
+  { id: 'herbal',      name: 'Herbal Medicine',       char: '藥', duration: 'Consultation', price: 'From $50', desc: 'Personalised herbal formulations for your constitution' },
+  { id: 'reflexology', name: 'Reflexology',           char: '足', duration: '30 – 60 min', price: 'From $50',  desc: 'Balance the body through pressure points on the feet' },
+  { id: 'couples',     name: 'Couples Massage',       char: '双', duration: '60 – 90 min', price: 'From $110', desc: 'Shared relaxation experience for you and your partner' },
 ];
 
 const allLocations = [
-  { id: 'anzac-square',  name: 'Anzac Square',          suburb: 'Brisbane CBD',     state: 'QLD' },
-  { id: 'queens-plaza',  name: 'Queens Plaza',           suburb: 'Brisbane CBD',     state: 'QLD' },
-  { id: 'chermside',     name: 'Westfield Chermside',   suburb: 'Chermside',        state: 'QLD' },
-  { id: 'garden-city',   name: 'Garden City',            suburb: 'Upper Mt Gravatt', state: 'QLD' },
-  { id: 'indooroopilly', name: 'Indooroopilly',          suburb: 'Indooroopilly',    state: 'QLD' },
-  { id: 'ipswich',       name: 'Riverlink',              suburb: 'Ipswich',          state: 'QLD' },
-  { id: 'toowoomba',     name: 'Grand Central',          suburb: 'Toowoomba',        state: 'QLD' },
-  { id: 'robina',        name: 'Robina Town Centre',    suburb: 'Robina',           state: 'QLD' },
-  { id: 'pacific-fair',  name: 'Pacific Fair',           suburb: 'Broadbeach',       state: 'QLD' },
-  { id: 'broadbeach',    name: 'The Oasis',              suburb: 'Broadbeach',       state: 'QLD' },
-  { id: 'maroochydore',  name: 'Sunshine Plaza',         suburb: 'Maroochydore',     state: 'QLD' },
-  { id: 'kawana',        name: 'Kawana Waters',          suburb: 'Bokarina',         state: 'QLD' },
-  { id: 'sydney-cbd',    name: 'Westfield Sydney',       suburb: 'Sydney CBD',       state: 'NSW' },
-  { id: 'chatswood',     name: 'Chatswood Chase',        suburb: 'Chatswood',        state: 'NSW' },
-  { id: 'parramatta',    name: 'Westfield Parramatta',  suburb: 'Parramatta',       state: 'NSW' },
+  { id: 'anzac-square',  name: 'Anzac Square',         suburb: 'Brisbane CBD',     state: 'QLD' },
+  { id: 'queens-plaza',  name: 'Queens Plaza',          suburb: 'Brisbane CBD',     state: 'QLD' },
+  { id: 'chermside',     name: 'Westfield Chermside',  suburb: 'Chermside',        state: 'QLD' },
+  { id: 'garden-city',   name: 'Garden City',           suburb: 'Upper Mt Gravatt', state: 'QLD' },
+  { id: 'indooroopilly', name: 'Indooroopilly',         suburb: 'Indooroopilly',    state: 'QLD' },
+  { id: 'ipswich',       name: 'Riverlink',             suburb: 'Ipswich',          state: 'QLD' },
+  { id: 'toowoomba',     name: 'Grand Central',         suburb: 'Toowoomba',        state: 'QLD' },
+  { id: 'robina',        name: 'Robina Town Centre',   suburb: 'Robina',           state: 'QLD' },
+  { id: 'pacific-fair',  name: 'Pacific Fair',          suburb: 'Broadbeach',       state: 'QLD' },
+  { id: 'broadbeach',    name: 'The Oasis',             suburb: 'Broadbeach',       state: 'QLD' },
+  { id: 'maroochydore',  name: 'Sunshine Plaza',        suburb: 'Maroochydore',     state: 'QLD' },
+  { id: 'kawana',        name: 'Kawana Waters',         suburb: 'Bokarina',         state: 'QLD' },
+  { id: 'sydney-cbd',    name: 'Westfield Sydney',      suburb: 'Sydney CBD',       state: 'NSW' },
+  { id: 'chatswood',     name: 'Chatswood Chase',       suburb: 'Chatswood',        state: 'NSW' },
+  { id: 'parramatta',    name: 'Westfield Parramatta', suburb: 'Parramatta',       state: 'NSW' },
 ];
 
 const timeSlots = [
@@ -56,26 +73,20 @@ const timeSlots = [
   { label: '7:00 PM',  period: 'Evening'   },
 ];
 
-// Simulate some unavailable slots
 const unavailable = new Set(['10:00 AM', '2:30 PM', '5:00 PM']);
 
 // ─── Calendar ────────────────────────────────────────────────────────────────
 
 function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelect: (d: Date) => void }) {
   const [viewMonth, setViewMonth] = useState(() => {
-    const d = new Date();
-    d.setDate(1);
-    d.setHours(0, 0, 0, 0);
-    return d;
+    const d = new Date(); d.setDate(1); d.setHours(0,0,0,0); return d;
   });
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = new Date(); today.setHours(0,0,0,0);
 
-  const monthStart = startOfMonth(viewMonth);
-  // Monday-based offset: getDay returns 0=Sun,1=Mon…6=Sat → adjust so Mon=0
-  const rawDow = getDay(monthStart);
-  const startOffset = rawDow === 0 ? 6 : rawDow - 1;
+  const monthStart   = startOfMonth(viewMonth);
+  const rawDow       = getDay(monthStart);
+  const startOffset  = rawDow === 0 ? 6 : rawDow - 1; // Monday-first
 
   const days: Date[] = [];
   for (let i = 0; i < 42; i++) {
@@ -84,43 +95,40 @@ function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelec
     days.push(d);
   }
 
-  const isDisabled  = (d: Date) => isBefore(d, today) || getDay(d) === 0; // No Sundays
-  const isOtherMo   = (d: Date) => !isSameMonth(d, viewMonth);
-  const isSelected  = (d: Date) => selected ? isSameDay(d, selected) : false;
-  const isToday     = (d: Date) => isSameDay(d, today);
-
-  const canGoPrev = !isSameMonth(viewMonth, today);
+  const isDisabled = (d: Date) => isBefore(d, today) || getDay(d) === 0;
+  const isOtherMo  = (d: Date) => !isSameMonth(d, viewMonth);
+  const isSelected = (d: Date) => selected ? isSameDay(d, selected) : false;
+  const isToday    = (d: Date) => isSameDay(d, today);
+  const canGoPrev  = !isSameMonth(viewMonth, today);
 
   return (
-    <div style={{ backgroundColor: '#1A1208', border: '1px solid rgba(201,144,58,0.15)', borderRadius: '12px', padding: '24px' }}>
+    <div style={{ backgroundColor: C.surface, border: `1px solid ${C.border}`, borderRadius: '12px', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
       {/* Month nav */}
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => setViewMonth(subMonths(viewMonth, 1))}
           disabled={!canGoPrev}
           className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200"
-          style={{ color: canGoPrev ? '#F5F0E3' : '#3D3530', backgroundColor: canGoPrev ? 'rgba(255,255,255,0.06)' : 'transparent', cursor: canGoPrev ? 'pointer' : 'not-allowed' }}
-        >
-          ‹
-        </button>
-        <span className="font-display text-chi-parchment text-lg">{format(viewMonth, 'MMMM yyyy')}</span>
+          style={{ color: canGoPrev ? C.ink : C.border, backgroundColor: canGoPrev ? C.surfaceAlt : 'transparent', cursor: canGoPrev ? 'pointer' : 'default', fontSize: '18px' }}
+        >‹</button>
+        <span className="font-display" style={{ color: C.ink, fontSize: '17px' }}>{format(viewMonth, 'MMMM yyyy')}</span>
         <button
           onClick={() => setViewMonth(addMonths(viewMonth, 1))}
-          className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200 hover:bg-white/10"
-          style={{ color: '#F5F0E3' }}
-        >
-          ›
-        </button>
+          className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200"
+          style={{ color: C.ink, backgroundColor: C.surfaceAlt, fontSize: '18px' }}
+          onMouseEnter={e => (e.currentTarget.style.backgroundColor = C.border)}
+          onMouseLeave={e => (e.currentTarget.style.backgroundColor = C.surfaceAlt)}
+        >›</button>
       </div>
 
-      {/* Day-of-week headers */}
-      <div className="grid grid-cols-7 mb-3">
-        {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
-          <div key={d} className="text-center font-body text-[11px] uppercase tracking-wider pb-2" style={{ color: '#6B6058' }}>{d}</div>
+      {/* Day headers */}
+      <div className="grid grid-cols-7 mb-2">
+        {['Mo','Tu','We','Th','Fr','Sa','Su'].map(d => (
+          <div key={d} className="text-center font-body text-[11px] uppercase tracking-wider pb-2" style={{ color: C.mist }}>{d}</div>
         ))}
       </div>
 
-      {/* Day grid */}
+      {/* Days */}
       <div className="grid grid-cols-7 gap-1">
         {days.map((day, i) => {
           const disabled  = isDisabled(day) || isOtherMo(day);
@@ -135,29 +143,28 @@ function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelec
               disabled={disabled}
               className="aspect-square flex items-center justify-center font-body text-sm rounded-lg transition-all duration-150"
               style={{
-                color: sel ? '#F5F0E3' : disabled ? (otherMo ? 'transparent' : '#3D3530') : '#F5F0E3',
-                backgroundColor: sel ? '#B8311F' : 'transparent',
-                border: todayDay && !sel ? '1px solid rgba(201,144,58,0.5)' : '1px solid transparent',
-                cursor: disabled ? 'default' : 'pointer',
-                opacity: disabled && !otherMo ? 0.3 : 1,
+                color:           otherMo ? 'transparent' : sel ? '#fff' : disabled ? C.border : C.ink,
+                backgroundColor: sel ? C.accent : 'transparent',
+                border:          todayDay && !sel ? `1.5px solid ${C.accent}` : '1.5px solid transparent',
+                cursor:          disabled ? 'default' : 'pointer',
+                opacity:         disabled && !otherMo ? 0.35 : 1,
               }}
-              onMouseEnter={e => { if (!disabled) (e.currentTarget as HTMLButtonElement).style.backgroundColor = sel ? '#B8311F' : 'rgba(255,255,255,0.08)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = sel ? '#B8311F' : 'transparent'; }}
+              onMouseEnter={e => { if (!disabled) (e.currentTarget as HTMLElement).style.backgroundColor = sel ? C.accent : C.surfaceAlt; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = sel ? C.accent : 'transparent'; }}
             >
               {otherMo ? '' : format(day, 'd')}
             </button>
           );
         })}
       </div>
-
-      <p className="font-body text-center mt-4" style={{ fontSize: '11px', color: '#6B6058' }}>
+      <p className="font-body text-center mt-4" style={{ fontSize: '11px', color: C.mist }}>
         Sundays unavailable · Past dates disabled
       </p>
     </div>
   );
 }
 
-// ─── Step indicator ───────────────────────────────────────────────────────────
+// ─── Step bar ────────────────────────────────────────────────────────────────
 
 const STEPS = ['Service', 'Location', 'Date & Time', 'Your Details'];
 
@@ -165,29 +172,29 @@ function StepBar({ current }: { current: number }) {
   return (
     <div className="flex items-center justify-center gap-0 mb-12">
       {STEPS.map((label, i) => {
-        const idx = i + 1;
-        const done    = idx < current;
-        const active  = idx === current;
+        const idx   = i + 1;
+        const done  = idx < current;
+        const active = idx === current;
         return (
           <div key={idx} className="flex items-center">
             <div className="flex flex-col items-center gap-1.5">
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center font-body text-sm transition-all duration-300"
                 style={{
-                  backgroundColor: done ? '#B8311F' : active ? 'transparent' : 'transparent',
-                  border: done ? 'none' : active ? '2px solid #B8311F' : '2px solid #3D3530',
-                  color: done ? '#F5F0E3' : active ? '#B8311F' : '#3D3530',
+                  backgroundColor: done ? C.accent : 'transparent',
+                  border: done ? 'none' : active ? `2px solid ${C.accent}` : `2px solid ${C.border}`,
+                  color: done ? '#fff' : active ? C.accent : C.mist,
                 }}
               >
                 {done ? '✓' : idx}
               </div>
               <span className="font-body text-[11px] uppercase tracking-wider hidden sm:block"
-                style={{ color: active ? '#F5F0E3' : done ? '#B8311F' : '#3D3530' }}>
+                style={{ color: active ? C.ink : done ? C.accent : C.mist }}>
                 {label}
               </span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className="w-16 lg:w-24 h-px mx-2 mb-5" style={{ backgroundColor: i < current - 1 ? '#B8311F' : '#2A2520' }} />
+              <div className="w-12 lg:w-20 h-px mx-2 mb-5" style={{ backgroundColor: i < current - 1 ? C.accent : C.border }} />
             )}
           </div>
         );
@@ -196,10 +203,10 @@ function StepBar({ current }: { current: number }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Main ────────────────────────────────────────────────────────────────────
 
 export default function BookingPage() {
-  const [step, setStep] = useState(1);
+  const [step,             setStep]            = useState(1);
   const [selectedService,  setSelectedService]  = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDate,     setSelectedDate]     = useState<Date | null>(null);
@@ -217,37 +224,33 @@ export default function BookingPage() {
     return true;
   };
 
-  const next = () => { if (canContinue()) setStep(s => Math.min(s + 1, 4)); };
-  const back = () => setStep(s => Math.max(s - 1, 1));
-
-  const handleSubmit = () => {
-    if (canContinue()) setSubmitted(true);
-  };
+  const next  = () => { if (canContinue()) setStep(s => Math.min(s + 1, 4)); };
+  const back  = () => setStep(s => Math.max(s - 1, 1));
+  const submit = () => { if (canContinue()) setSubmitted(true); };
 
   const svc = services.find(s => s.id === selectedService);
   const loc = allLocations.find(l => l.id === selectedLocation);
 
-  // ── Confirmation screen ────────────────────────────────────────
+  // ── Confirmation ────────────────────────────────────────────────
   if (submitted) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: '#0D0A06' }}>
-        <div className="text-center max-w-lg">
-          <div className="font-display mb-6" style={{ fontSize: '80px', color: '#B8311F', lineHeight: 1 }}>气</div>
-          <h1 className="font-display text-chi-parchment mb-4" style={{ fontSize: 'clamp(32px,5vw,52px)', lineHeight: 1 }}>
-            Booking Confirmed
-          </h1>
-          <p className="font-body text-chi-mist mb-8" style={{ lineHeight: 1.8 }}>
-            Thank you, {form.firstName}. Your session has been requested. A confirmation will be sent to <span style={{ color: '#F5F0E3' }}>{form.email}</span>.
+      <main className="min-h-screen flex items-center justify-center px-6 py-24" style={{ backgroundColor: C.bg }}>
+        <div className="text-center max-w-lg w-full">
+          <div className="font-display mb-6" style={{ fontSize: '72px', color: C.accent, lineHeight: 1 }}>气</div>
+          <h1 className="font-display mb-4" style={{ color: C.ink, fontSize: 'clamp(32px,5vw,52px)', lineHeight: 1 }}>Booking Confirmed</h1>
+          <p className="font-body mb-8" style={{ color: C.smoke, lineHeight: 1.8 }}>
+            Thank you, {form.firstName}. Your session has been requested.<br />
+            A confirmation will be sent to <strong style={{ color: C.ink }}>{form.email}</strong>.
           </p>
-          <div className="p-6 rounded-chi mb-8 text-left space-y-3" style={{ backgroundColor: '#1A1208', border: '1px solid rgba(201,144,58,0.15)' }}>
-            <Row label="Service"  value={svc?.name ?? ''} />
-            <Row label="Location" value={`${loc?.name}, ${loc?.suburb}`} />
-            <Row label="Date"     value={selectedDate ? format(selectedDate, 'EEEE, d MMMM yyyy') : ''} />
-            <Row label="Time"     value={selectedTime} />
-            <Row label="Name"     value={`${form.firstName} ${form.lastName}`} />
+          <div className="p-6 rounded-xl mb-8 text-left space-y-3" style={{ backgroundColor: C.surface, border: `1px solid ${C.border}`, boxShadow: '0 2px 16px rgba(0,0,0,0.05)' }}>
+            <ConfirmRow label="Service"  value={svc?.name ?? ''} />
+            <ConfirmRow label="Location" value={`${loc?.name}, ${loc?.suburb}`} />
+            <ConfirmRow label="Date"     value={selectedDate ? format(selectedDate, 'EEEE, d MMMM yyyy') : ''} />
+            <ConfirmRow label="Time"     value={selectedTime} />
+            <ConfirmRow label="Name"     value={`${form.firstName} ${form.lastName}`} />
           </div>
-          <Link to="/" className="inline-block px-8 py-3 rounded-chi font-body text-sm uppercase tracking-wider transition-all duration-300"
-            style={{ backgroundColor: '#B8311F', color: '#F5F0E3' }}>
+          <Link to="/" className="inline-block px-8 py-3 rounded-xl font-body text-sm uppercase tracking-wider"
+            style={{ backgroundColor: C.accent, color: '#fff' }}>
             Back to Home
           </Link>
         </div>
@@ -256,28 +259,26 @@ export default function BookingPage() {
   }
 
   return (
-    <main className="min-h-screen" style={{ backgroundColor: '#0D0A06' }}>
-      {/* Header */}
-      <div className="relative pt-28 pb-10 text-center" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none font-display select-none"
-          style={{ fontSize: '200px', color: 'rgba(245,240,227,0.025)', lineHeight: 1, top: '60%' }}>
-          预
-        </div>
-        <span className="label-style text-chi-cinnabar block mb-2">CHI LINK · ONLINE BOOKING</span>
-        <h1 className="font-display text-chi-parchment" style={{ fontSize: 'clamp(36px,5vw,56px)', lineHeight: 0.95, letterSpacing: '-0.03em' }}>
+    <main className="min-h-screen" style={{ backgroundColor: C.bg }}>
+      {/* Page header */}
+      <div className="pt-28 pb-10 text-center" style={{ borderBottom: `1px solid ${C.divider}`, backgroundColor: C.surface }}>
+        <span className="label-style block mb-2" style={{ color: C.accent }}>CHI LINK · ONLINE BOOKING</span>
+        <h1 className="font-display" style={{ color: C.ink, fontSize: 'clamp(36px,5vw,56px)', lineHeight: 0.95, letterSpacing: '-0.03em' }}>
           Book Your Session
         </h1>
+        <p className="font-body mt-3" style={{ color: C.smoke, fontSize: '15px' }}>
+          Simple, quick, and done in under two minutes.
+        </p>
       </div>
 
-      {/* Content */}
       <div className="max-w-[860px] mx-auto px-6 py-12">
         <StepBar current={step} />
 
         {/* ── Step 1: Service ── */}
         {step === 1 && (
           <div>
-            <h2 className="font-display text-chi-parchment text-2xl mb-2">Choose a Service</h2>
-            <p className="font-body text-chi-mist mb-8" style={{ fontSize: '14px' }}>Select the treatment you'd like to book.</p>
+            <h2 className="font-display text-2xl mb-1" style={{ color: C.ink }}>Choose a Service</h2>
+            <p className="font-body mb-8" style={{ color: C.smoke, fontSize: '14px' }}>Select the treatment you'd like to book.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {services.map(svc => {
                 const active = selectedService === svc.id;
@@ -285,24 +286,28 @@ export default function BookingPage() {
                   <button
                     key={svc.id}
                     onClick={() => setSelectedService(svc.id)}
-                    className="text-left p-5 rounded-chi transition-all duration-200 relative overflow-hidden"
+                    className="text-left p-5 rounded-xl transition-all duration-200 relative overflow-hidden"
                     style={{
-                      backgroundColor: active ? 'rgba(184,49,31,0.12)' : '#1A1208',
-                      border: active ? '1.5px solid #B8311F' : '1.5px solid rgba(255,255,255,0.06)',
+                      backgroundColor: active ? C.accentBg : C.surface,
+                      border: active ? `2px solid ${C.accent}` : `1.5px solid ${C.border}`,
+                      boxShadow: active ? `0 0 0 3px rgba(184,49,31,0.06)` : '0 1px 4px rgba(0,0,0,0.04)',
                     }}
+                    onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.borderColor = 'rgba(184,49,31,0.3)'; }}
+                    onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.borderColor = C.border; }}
                   >
-                    <div className="absolute top-4 right-4 font-display opacity-10 select-none" style={{ fontSize: '40px', color: '#F5F0E3', lineHeight: 1 }}>
+                    {/* Character watermark */}
+                    <div className="absolute top-3 right-4 select-none font-display" style={{ fontSize: '44px', color: C.accent, opacity: 0.07, lineHeight: 1 }}>
                       {svc.char}
                     </div>
-                    <span className="block font-display text-chi-parchment text-lg mb-1">{svc.name}</span>
-                    <span className="block font-body text-chi-mist text-sm mb-3">{svc.desc}</span>
+                    <span className="block font-display text-lg mb-1" style={{ color: C.ink }}>{svc.name}</span>
+                    <span className="block font-body text-sm mb-3" style={{ color: C.smoke }}>{svc.desc}</span>
                     <div className="flex items-center gap-3">
-                      <span className="font-body text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: '#8C8478' }}>{svc.duration}</span>
-                      <span className="font-body text-xs" style={{ color: active ? '#B8311F' : '#C9903A' }}>{svc.price}</span>
+                      <span className="font-body text-xs px-2.5 py-1 rounded-full" style={{ backgroundColor: C.surfaceAlt, color: C.mist }}>{svc.duration}</span>
+                      <span className="font-body text-sm font-medium" style={{ color: active ? C.accent : C.gold }}>{svc.price}</span>
                     </div>
                     {active && (
-                      <div className="absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: '#B8311F' }}>
-                        <span style={{ color: '#F5F0E3', fontSize: '10px' }}>✓</span>
+                      <div className="absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: C.accent }}>
+                        <span style={{ color: '#fff', fontSize: '10px' }}>✓</span>
                       </div>
                     )}
                   </button>
@@ -315,15 +320,13 @@ export default function BookingPage() {
         {/* ── Step 2: Location ── */}
         {step === 2 && (
           <div>
-            <h2 className="font-display text-chi-parchment text-2xl mb-2">Choose a Location</h2>
-            <p className="font-body text-chi-mist mb-8" style={{ fontSize: '14px' }}>All {allLocations.length} clinics available for your selected treatment.</p>
-
-            {/* Group by state */}
+            <h2 className="font-display text-2xl mb-1" style={{ color: C.ink }}>Choose a Location</h2>
+            <p className="font-body mb-8" style={{ color: C.smoke, fontSize: '14px' }}>All {allLocations.length} clinics are available for your selected treatment.</p>
             {['QLD', 'NSW'].map(state => (
               <div key={state} className="mb-8">
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="label-style text-chi-cinnabar">{state}</span>
-                  <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }} />
+                  <span className="label-style" style={{ color: C.accent }}>{state === 'QLD' ? 'Queensland' : 'New South Wales'}</span>
+                  <div className="flex-1 h-px" style={{ backgroundColor: C.divider }} />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {allLocations.filter(l => l.state === state).map(loc => {
@@ -332,20 +335,23 @@ export default function BookingPage() {
                       <button
                         key={loc.id}
                         onClick={() => setSelectedLocation(loc.id)}
-                        className="text-left p-4 rounded-chi transition-all duration-200"
+                        className="text-left p-4 rounded-xl transition-all duration-200"
                         style={{
-                          backgroundColor: active ? 'rgba(184,49,31,0.12)' : '#1A1208',
-                          border: active ? '1.5px solid #B8311F' : '1.5px solid rgba(255,255,255,0.06)',
+                          backgroundColor: active ? C.accentBg : C.surface,
+                          border: active ? `2px solid ${C.accent}` : `1.5px solid ${C.border}`,
+                          boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
                         }}
+                        onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.borderColor = 'rgba(184,49,31,0.3)'; }}
+                        onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.borderColor = C.border; }}
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <span className="block font-display text-chi-parchment text-base mb-0.5">{loc.name}</span>
-                            <span className="block font-body text-chi-mist text-sm">{loc.suburb}</span>
+                            <span className="block font-display text-base mb-0.5" style={{ color: C.ink }}>{loc.name}</span>
+                            <span className="block font-body text-sm" style={{ color: C.smoke }}>{loc.suburb}</span>
                           </div>
                           {active && (
-                            <div className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5" style={{ backgroundColor: '#B8311F' }}>
-                              <span style={{ color: '#F5F0E3', fontSize: '10px' }}>✓</span>
+                            <div className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5" style={{ backgroundColor: C.accent }}>
+                              <span style={{ color: '#fff', fontSize: '10px' }}>✓</span>
                             </div>
                           )}
                         </div>
@@ -361,34 +367,32 @@ export default function BookingPage() {
         {/* ── Step 3: Date & Time ── */}
         {step === 3 && (
           <div>
-            <h2 className="font-display text-chi-parchment text-2xl mb-2">Choose Date & Time</h2>
-            <p className="font-body text-chi-mist mb-8" style={{ fontSize: '14px' }}>
-              Select an available date and your preferred time slot.
-            </p>
+            <h2 className="font-display text-2xl mb-1" style={{ color: C.ink }}>Choose Date & Time</h2>
+            <p className="font-body mb-8" style={{ color: C.smoke, fontSize: '14px' }}>Select an available date and your preferred time slot.</p>
 
             <div className="flex flex-col lg:flex-row gap-8">
               {/* Calendar */}
-              <div className="flex-shrink-0" style={{ width: '100%', maxWidth: '340px' }}>
-                <p className="font-body text-chi-parchment text-sm mb-3 uppercase tracking-wider" style={{ opacity: 0.6 }}>Date</p>
+              <div className="flex-shrink-0" style={{ width: '100%', maxWidth: '320px' }}>
+                <p className="font-body text-sm mb-3 uppercase tracking-wider" style={{ color: C.mist }}>Date</p>
                 <CalendarPicker selected={selectedDate} onSelect={setSelectedDate} />
               </div>
 
               {/* Time slots */}
-              <div className="flex-1">
-                <p className="font-body text-chi-parchment text-sm mb-3 uppercase tracking-wider" style={{ opacity: 0.6 }}>
+              <div className="flex-1 min-w-0">
+                <p className="font-body text-sm mb-3 uppercase tracking-wider" style={{ color: C.mist }}>
                   Time {selectedDate ? `· ${format(selectedDate, 'EEE d MMM')}` : ''}
                 </p>
                 {!selectedDate ? (
-                  <div className="flex items-center justify-center h-48 rounded-chi" style={{ backgroundColor: '#1A1208', border: '1px dashed rgba(255,255,255,0.08)' }}>
-                    <p className="font-body text-chi-mist text-sm">Select a date first</p>
+                  <div className="flex items-center justify-center h-48 rounded-xl" style={{ backgroundColor: C.surface, border: `1.5px dashed ${C.border}` }}>
+                    <p className="font-body text-sm" style={{ color: C.mist }}>Select a date first</p>
                   </div>
                 ) : (
                   <div>
-                    {['Morning', 'Afternoon', 'Evening'].map(period => {
+                    {(['Morning', 'Afternoon', 'Evening'] as const).map(period => {
                       const slots = timeSlots.filter(t => t.period === period);
                       return (
                         <div key={period} className="mb-5">
-                          <p className="font-body text-xs uppercase tracking-wider mb-2" style={{ color: '#6B6058' }}>{period}</p>
+                          <p className="font-body text-xs uppercase tracking-wider mb-2" style={{ color: C.mist }}>{period}</p>
                           <div className="flex flex-wrap gap-2">
                             {slots.map(slot => {
                               const booked = unavailable.has(slot.label);
@@ -401,12 +405,15 @@ export default function BookingPage() {
                                   className="font-body text-sm rounded-lg transition-all duration-150"
                                   style={{
                                     padding: '8px 16px',
-                                    backgroundColor: booked ? 'transparent' : active ? '#B8311F' : '#1A1208',
-                                    color: booked ? '#2A2520' : active ? '#F5F0E3' : '#CEC5B0',
-                                    border: booked ? '1px solid #1A1208' : active ? '1px solid #B8311F' : '1px solid rgba(255,255,255,0.08)',
+                                    backgroundColor: booked ? C.surfaceAlt : active ? C.accent : C.surface,
+                                    color: booked ? C.border : active ? '#fff' : C.ink,
+                                    border: booked ? `1px solid ${C.border}` : active ? `1px solid ${C.accent}` : `1px solid ${C.border}`,
                                     cursor: booked ? 'not-allowed' : 'pointer',
                                     textDecoration: booked ? 'line-through' : 'none',
+                                    boxShadow: active ? `0 2px 8px rgba(184,49,31,0.2)` : '0 1px 3px rgba(0,0,0,0.04)',
                                   }}
+                                  onMouseEnter={e => { if (!booked && !active) { (e.currentTarget as HTMLElement).style.borderColor = C.accent; (e.currentTarget as HTMLElement).style.backgroundColor = C.accentBg; } }}
+                                  onMouseLeave={e => { if (!booked && !active) { (e.currentTarget as HTMLElement).style.borderColor = C.border; (e.currentTarget as HTMLElement).style.backgroundColor = C.surface; } }}
                                 >
                                   {slot.label}
                                 </button>
@@ -416,9 +423,7 @@ export default function BookingPage() {
                         </div>
                       );
                     })}
-                    <p className="font-body mt-2" style={{ fontSize: '11px', color: '#6B6058' }}>
-                      Strikethrough slots are unavailable
-                    </p>
+                    <p className="font-body mt-1" style={{ fontSize: '11px', color: C.mist }}>Strikethrough = unavailable</p>
                   </div>
                 )}
               </div>
@@ -429,11 +434,11 @@ export default function BookingPage() {
         {/* ── Step 4: Details ── */}
         {step === 4 && (
           <div>
-            <h2 className="font-display text-chi-parchment text-2xl mb-2">Your Details</h2>
-            <p className="font-body text-chi-mist mb-8" style={{ fontSize: '14px' }}>Almost done — just a few details to confirm your booking.</p>
+            <h2 className="font-display text-2xl mb-1" style={{ color: C.ink }}>Your Details</h2>
+            <p className="font-body mb-6" style={{ color: C.smoke, fontSize: '14px' }}>Almost done — just a few details to confirm your booking.</p>
 
-            {/* Booking summary strip */}
-            <div className="flex flex-wrap gap-4 mb-8 p-4 rounded-chi" style={{ backgroundColor: '#1A1208', border: '1px solid rgba(201,144,58,0.12)' }}>
+            {/* Summary strip */}
+            <div className="flex flex-wrap gap-6 mb-8 p-4 rounded-xl" style={{ backgroundColor: C.surface, border: `1px solid ${C.border}`, boxShadow: '0 1px 6px rgba(0,0,0,0.04)' }}>
               <SummaryPill label="Service"  value={svc?.name ?? ''} />
               <SummaryPill label="Location" value={`${loc?.name}, ${loc?.suburb}`} />
               {selectedDate && <SummaryPill label="Date" value={format(selectedDate, 'd MMM yyyy')} />}
@@ -441,72 +446,67 @@ export default function BookingPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label="First Name *"   value={form.firstName} onChange={v => setForm(f => ({ ...f, firstName: v }))} placeholder="e.g. Sarah" />
-              <Field label="Last Name *"    value={form.lastName}  onChange={v => setForm(f => ({ ...f, lastName:  v }))} placeholder="e.g. Mitchell" />
-              <Field label="Phone *"        value={form.phone}     onChange={v => setForm(f => ({ ...f, phone:     v }))} placeholder="e.g. 0412 345 678" type="tel" />
-              <Field label="Email *"        value={form.email}     onChange={v => setForm(f => ({ ...f, email:     v }))} placeholder="e.g. sarah@email.com" type="email" />
+              <Field label="First Name *"  value={form.firstName} onChange={v => setForm(f => ({ ...f, firstName: v }))} placeholder="Sarah"           />
+              <Field label="Last Name *"   value={form.lastName}  onChange={v => setForm(f => ({ ...f, lastName:  v }))} placeholder="Mitchell"        />
+              <Field label="Phone *"       value={form.phone}     onChange={v => setForm(f => ({ ...f, phone:     v }))} placeholder="0412 345 678"    type="tel"   />
+              <Field label="Email *"       value={form.email}     onChange={v => setForm(f => ({ ...f, email:     v }))} placeholder="sarah@email.com" type="email" />
             </div>
             <div className="mt-4">
-              <label className="block font-body text-chi-mist text-sm mb-2" style={{ letterSpacing: '0.04em' }}>
-                Additional Notes <span style={{ color: '#6B6058' }}>(optional)</span>
+              <label className="block font-body text-sm mb-2" style={{ color: C.smoke, letterSpacing: '0.02em' }}>
+                Additional Notes <span style={{ color: C.mist }}>(optional)</span>
               </label>
               <textarea
                 rows={3}
                 value={form.notes}
                 onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                 placeholder="Any health conditions, preferences or questions for your practitioner…"
-                className="w-full font-body text-sm rounded-chi outline-none resize-none"
-                style={{
-                  backgroundColor: '#1A1208',
-                  border: '1.5px solid rgba(255,255,255,0.08)',
-                  color: '#F5F0E3',
-                  padding: '12px 16px',
-                  lineHeight: 1.7,
-                  caretColor: '#B8311F',
-                }}
-                onFocus={e => { e.currentTarget.style.borderColor = 'rgba(184,49,31,0.5)'; }}
-                onBlur={e  => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+                className="w-full font-body text-sm rounded-xl outline-none resize-none"
+                style={{ backgroundColor: C.surface, border: `1.5px solid ${C.border}`, color: C.ink, padding: '12px 16px', lineHeight: 1.7 }}
+                onFocus={e  => { e.currentTarget.style.borderColor = C.borderFocus; }}
+                onBlur={e   => { e.currentTarget.style.borderColor = C.border; }}
               />
             </div>
           </div>
         )}
 
         {/* ── Nav buttons ── */}
-        <div className="flex items-center justify-between mt-10 pt-8" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="flex items-center justify-between mt-10 pt-8" style={{ borderTop: `1px solid ${C.divider}` }}>
           {step > 1 ? (
-            <button onClick={back} className="font-body text-sm uppercase tracking-wider transition-colors duration-200"
-              style={{ color: '#8C8478' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#F5F0E3')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#8C8478')}
+            <button
+              onClick={back}
+              className="font-body text-sm uppercase tracking-wider transition-colors duration-200"
+              style={{ color: C.mist }}
+              onMouseEnter={e => (e.currentTarget.style.color = C.ink)}
+              onMouseLeave={e => (e.currentTarget.style.color = C.mist)}
             >
               ← Back
             </button>
-          ) : (
-            <div />
-          )}
+          ) : <div />}
 
           {step < 4 ? (
             <button
               onClick={next}
               disabled={!canContinue()}
-              className="px-8 py-3 rounded-chi font-body text-sm uppercase tracking-wider transition-all duration-200"
+              className="px-8 py-3 rounded-xl font-body text-sm uppercase tracking-wider transition-all duration-200"
               style={{
-                backgroundColor: canContinue() ? '#B8311F' : '#2A2520',
-                color: canContinue() ? '#F5F0E3' : '#4A4540',
-                cursor: canContinue() ? 'pointer' : 'not-allowed',
+                backgroundColor: canContinue() ? C.accent : C.border,
+                color:           canContinue() ? '#fff'   : C.mist,
+                cursor:          canContinue() ? 'pointer' : 'not-allowed',
+                boxShadow:       canContinue() ? '0 2px 12px rgba(184,49,31,0.25)' : 'none',
               }}
             >
               Continue →
             </button>
           ) : (
             <button
-              onClick={handleSubmit}
+              onClick={submit}
               disabled={!canContinue()}
-              className="px-10 py-3 rounded-chi font-body text-sm uppercase tracking-wider transition-all duration-200"
+              className="px-10 py-3 rounded-xl font-body text-sm uppercase tracking-wider transition-all duration-200"
               style={{
-                backgroundColor: canContinue() ? '#B8311F' : '#2A2520',
-                color: canContinue() ? '#F5F0E3' : '#4A4540',
-                cursor: canContinue() ? 'pointer' : 'not-allowed',
+                backgroundColor: canContinue() ? C.accent : C.border,
+                color:           canContinue() ? '#fff'   : C.mist,
+                cursor:          canContinue() ? 'pointer' : 'not-allowed',
+                boxShadow:       canContinue() ? '0 2px 16px rgba(184,49,31,0.3)' : 'none',
               }}
             >
               Confirm Booking
@@ -518,13 +518,13 @@ export default function BookingPage() {
   );
 }
 
-// ─── Small helpers ────────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function Row({ label, value }: { label: string; value: string }) {
+function ConfirmRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-4">
-      <span className="font-body text-chi-mist text-sm flex-shrink-0">{label}</span>
-      <span className="font-body text-chi-parchment text-sm text-right">{value}</span>
+      <span className="font-body text-sm flex-shrink-0" style={{ color: C.mist }}>{label}</span>
+      <span className="font-body text-sm text-right" style={{ color: C.ink }}>{value}</span>
     </div>
   );
 }
@@ -532,35 +532,27 @@ function Row({ label, value }: { label: string; value: string }) {
 function SummaryPill({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <span className="block font-body text-[10px] uppercase tracking-wider mb-0.5" style={{ color: '#6B6058' }}>{label}</span>
-      <span className="block font-body text-chi-parchment text-sm">{value}</span>
+      <span className="block font-body text-[10px] uppercase tracking-wider mb-0.5" style={{ color: C.mist }}>{label}</span>
+      <span className="block font-body text-sm" style={{ color: C.ink }}>{value}</span>
     </div>
   );
 }
 
-function Field({
-  label, value, onChange, placeholder, type = 'text',
-}: {
+function Field({ label, value, onChange, placeholder, type = 'text' }: {
   label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string;
 }) {
   return (
     <div>
-      <label className="block font-body text-chi-mist text-sm mb-2" style={{ letterSpacing: '0.04em' }}>{label}</label>
+      <label className="block font-body text-sm mb-2" style={{ color: C.smoke, letterSpacing: '0.02em' }}>{label}</label>
       <input
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full font-body text-sm rounded-chi outline-none"
-        style={{
-          backgroundColor: '#1A1208',
-          border: '1.5px solid rgba(255,255,255,0.08)',
-          color: '#F5F0E3',
-          padding: '12px 16px',
-          caretColor: '#B8311F',
-        }}
-        onFocus={e => { e.currentTarget.style.borderColor = 'rgba(184,49,31,0.5)'; }}
-        onBlur={e  => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+        className="w-full font-body text-sm rounded-xl outline-none"
+        style={{ backgroundColor: C.surface, border: `1.5px solid ${C.border}`, color: C.ink, padding: '12px 16px' }}
+        onFocus={e => { e.currentTarget.style.borderColor = C.borderFocus; }}
+        onBlur={e  => { e.currentTarget.style.borderColor = C.border; }}
       />
     </div>
   );

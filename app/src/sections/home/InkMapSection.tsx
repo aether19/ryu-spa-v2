@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Link } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,39 +15,43 @@ interface Location {
   cluster: string;
 }
 
-// Coordinates in SVG viewBox (0 0 674.71 628.37) matching MrTim_Australia_Outline.svg
-// Manually spread within each city cluster so dots are clearly readable
 const locations: Location[] = [
-  // ── Sunshine Coast ─────────────────────────────────────────────
-  { id: 'maroochydore', name: 'Sunshine Plaza',       address: 'Maroochydore, QLD',     cx: 656, cy: 279, rating: '4.9', cluster: 'sunshine-coast' },
-  { id: 'kawana',       name: 'Kawana Waters',         address: 'Bokarina, QLD',          cx: 667, cy: 287, rating: '4.8', cluster: 'sunshine-coast' },
-
-  // ── Brisbane CBD ────────────────────────────────────────────────
-  { id: 'anzac-square', name: 'Anzac Square',          address: 'Brisbane CBD, QLD',      cx: 657, cy: 296, rating: '4.9', cluster: 'brisbane' },
-  { id: 'queens-plaza', name: 'Queens Plaza',           address: 'Brisbane CBD, QLD',      cx: 667, cy: 293, rating: '4.8', cluster: 'brisbane' },
-
-  // ── Brisbane Suburbs ────────────────────────────────────────────
-  { id: 'chermside',    name: 'Westfield Chermside',   address: 'Chermside, QLD',         cx: 651, cy: 303, rating: '4.8', cluster: 'brisbane' },
-  { id: 'garden-city',  name: 'Garden City',            address: 'Upper Mt Gravatt, QLD',  cx: 664, cy: 308, rating: '4.9', cluster: 'brisbane' },
-  { id: 'indooroopilly',name: 'Indooroopilly',          address: 'Indooroopilly, QLD',     cx: 651, cy: 312, rating: '4.7', cluster: 'brisbane' },
-  { id: 'ipswich',      name: 'Riverlink',              address: 'Ipswich, QLD',           cx: 641, cy: 316, rating: '4.7', cluster: 'brisbane' },
-  { id: 'toowoomba',    name: 'Grand Central',          address: 'Toowoomba, QLD',         cx: 627, cy: 313, rating: '4.8', cluster: 'brisbane' },
-
-  // ── Gold Coast ──────────────────────────────────────────────────
-  { id: 'robina',       name: 'Robina Town Centre',    address: 'Robina, QLD',            cx: 659, cy: 321, rating: '4.7', cluster: 'gold-coast' },
-  { id: 'pacific-fair', name: 'Pacific Fair',           address: 'Broadbeach, QLD',        cx: 669, cy: 318, rating: '4.8', cluster: 'gold-coast' },
-  { id: 'broadbeach',   name: 'The Oasis',              address: 'Broadbeach, QLD',        cx: 665, cy: 328, rating: '4.7', cluster: 'gold-coast' },
-
-  // ── Sydney ──────────────────────────────────────────────────────
-  { id: 'sydney-cbd',   name: 'Westfield Sydney',       address: 'Sydney CBD, NSW',        cx: 634, cy: 438, rating: '4.8', cluster: 'sydney' },
-  { id: 'chatswood',    name: 'Chatswood Chase',         address: 'Chatswood, NSW',         cx: 641, cy: 429, rating: '4.7', cluster: 'sydney' },
-  { id: 'parramatta',   name: 'Westfield Parramatta',   address: 'Parramatta, NSW',        cx: 623, cy: 434, rating: '4.8', cluster: 'sydney' },
+  { id: 'maroochydore',  name: 'Sunshine Plaza',        address: 'Maroochydore, QLD',     cx: 656, cy: 279, rating: '4.9', cluster: 'sunshine-coast' },
+  { id: 'kawana',        name: 'Kawana Waters',          address: 'Bokarina, QLD',          cx: 667, cy: 287, rating: '4.8', cluster: 'sunshine-coast' },
+  { id: 'anzac-square',  name: 'Anzac Square',           address: 'Brisbane CBD, QLD',      cx: 657, cy: 296, rating: '4.9', cluster: 'brisbane' },
+  { id: 'queens-plaza',  name: 'Queens Plaza',           address: 'Brisbane CBD, QLD',      cx: 667, cy: 293, rating: '4.8', cluster: 'brisbane' },
+  { id: 'chermside',     name: 'Westfield Chermside',    address: 'Chermside, QLD',         cx: 651, cy: 303, rating: '4.8', cluster: 'brisbane' },
+  { id: 'garden-city',   name: 'Garden City',            address: 'Upper Mt Gravatt, QLD',  cx: 664, cy: 308, rating: '4.9', cluster: 'brisbane' },
+  { id: 'indooroopilly', name: 'Indooroopilly',          address: 'Indooroopilly, QLD',     cx: 651, cy: 312, rating: '4.7', cluster: 'brisbane' },
+  { id: 'ipswich',       name: 'Riverlink',              address: 'Ipswich, QLD',           cx: 641, cy: 316, rating: '4.7', cluster: 'brisbane' },
+  { id: 'toowoomba',     name: 'Grand Central',          address: 'Toowoomba, QLD',         cx: 627, cy: 313, rating: '4.8', cluster: 'brisbane' },
+  { id: 'robina',        name: 'Robina Town Centre',     address: 'Robina, QLD',            cx: 659, cy: 321, rating: '4.7', cluster: 'gold-coast' },
+  { id: 'pacific-fair',  name: 'Pacific Fair',           address: 'Broadbeach, QLD',        cx: 669, cy: 318, rating: '4.8', cluster: 'gold-coast' },
+  { id: 'broadbeach',    name: 'The Oasis',              address: 'Broadbeach, QLD',        cx: 665, cy: 328, rating: '4.7', cluster: 'gold-coast' },
+  { id: 'sydney-cbd',    name: 'Westfield Sydney',       address: 'Sydney CBD, NSW',        cx: 634, cy: 438, rating: '4.8', cluster: 'sydney' },
+  { id: 'chatswood',     name: 'Chatswood Chase',        address: 'Chatswood, NSW',         cx: 641, cy: 429, rating: '4.7', cluster: 'sydney' },
+  { id: 'parramatta',    name: 'Westfield Parramatta',   address: 'Parramatta, NSW',        cx: 623, cy: 434, rating: '4.8', cluster: 'sydney' },
 ];
 
 export default function InkMapSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headerRef  = useRef<HTMLDivElement>(null);
-  const [activeLocation, setActiveLocation] = useState<Location | null>(null);
+
+  // hoveredLocation: shows preview on mouse-over
+  // lockedLocation:  stays visible after click
+  const [hoveredLocation, setHoveredLocation] = useState<Location | null>(null);
+  const [lockedLocation,  setLockedLocation]  = useState<Location | null>(null);
+
+  const displayLocation = lockedLocation ?? hoveredLocation;
+
+  const handleDotClick = (loc: Location, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLockedLocation(prev => prev?.id === loc.id ? null : loc);
+  };
+
+  const handleMapClick = () => {
+    setLockedLocation(null);
+  };
 
   useEffect(() => {
     const triggers: ScrollTrigger[] = [];
@@ -83,17 +88,19 @@ export default function InkMapSection() {
         </div>
 
         {/* Desktop map */}
-        <div className="hidden lg:block" style={{ position: 'relative', maxWidth: '520px', width: '52%', margin: '0 auto' }}>
+        <div
+          className="hidden lg:block"
+          style={{ position: 'relative', maxWidth: '520px', width: '52%', margin: '0 auto' }}
+          onClick={handleMapClick}
+        >
           <div style={{ position: 'relative', paddingBottom: '93.13%' }}>
 
-            {/* Real SVG outline */}
             <img
               src="/images/MrTim_Australia_Outline.svg"
               alt="Australia map"
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', filter: 'brightness(0) invert(1)', opacity: 0.28 }}
             />
 
-            {/* Dots overlay — same viewBox as the SVG file */}
             <svg
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
               viewBox="0 0 674.71 628.37"
@@ -108,54 +115,96 @@ export default function InkMapSection() {
               <text x="520" y="474" fill="rgba(255,255,255,0.16)" fontSize="11" fontFamily="Syne, sans-serif" letterSpacing="1">VIC</text>
               <text x="540" y="574" fill="rgba(255,255,255,0.13)" fontSize="9"  fontFamily="Syne, sans-serif" letterSpacing="1">TAS</text>
 
-              {locations.map((loc) => (
-                <g
-                  key={loc.id}
-                  className="location-dot"
-                  style={{ transformOrigin: `${loc.cx}px ${loc.cy}px`, cursor: 'pointer' }}
-                  onMouseEnter={() => setActiveLocation(loc)}
-                  onMouseLeave={() => setActiveLocation(null)}
-                >
-                  {/* Pulse ring */}
-                  <circle cx={loc.cx} cy={loc.cy} r="14" fill="none" stroke="#B8311F" strokeWidth="0.6" opacity="0">
-                    <animate attributeName="r"       values="9;18;9"   dur="2.8s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.4;0;0.4" dur="2.8s" repeatCount="indefinite" />
-                  </circle>
-                  {/* Solid dot — larger than before (r=5) */}
-                  <circle
-                    cx={loc.cx} cy={loc.cy} r="5"
-                    fill={activeLocation?.id === loc.id ? '#FF4D2E' : '#B8311F'}
-                    stroke="rgba(245,240,227,0.3)"
-                    strokeWidth="0.8"
-                    style={{ transition: 'fill 0.2s' }}
-                  />
-                </g>
-              ))}
+              {locations.map((loc) => {
+                const isLocked  = lockedLocation?.id === loc.id;
+                const isHovered = hoveredLocation?.id === loc.id;
+                const isActive  = isLocked || isHovered;
+
+                return (
+                  <g
+                    key={loc.id}
+                    className="location-dot"
+                    style={{ transformOrigin: `${loc.cx}px ${loc.cy}px`, cursor: 'pointer' }}
+                    onMouseEnter={() => setHoveredLocation(loc)}
+                    onMouseLeave={() => setHoveredLocation(null)}
+                    onClick={(e) => handleDotClick(loc, e)}
+                  >
+                    {/* Pulse ring */}
+                    <circle cx={loc.cx} cy={loc.cy} r="14" fill="none" stroke="#B8311F" strokeWidth="0.6" opacity="0">
+                      <animate attributeName="r"       values="9;18;9"    dur="2.8s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="0.4;0;0.4" dur="2.8s" repeatCount="indefinite" />
+                    </circle>
+                    {/* Lock ring — visible when clicked/locked */}
+                    {isLocked && (
+                      <circle cx={loc.cx} cy={loc.cy} r="9" fill="none" stroke="#B8311F" strokeWidth="1.5" opacity="0.7" />
+                    )}
+                    {/* Solid dot */}
+                    <circle
+                      cx={loc.cx} cy={loc.cy} r="5"
+                      fill={isActive ? '#FF4D2E' : '#B8311F'}
+                      stroke="rgba(245,240,227,0.3)"
+                      strokeWidth="0.8"
+                      style={{ transition: 'fill 0.15s, r 0.15s' }}
+                    />
+                  </g>
+                );
+              })}
             </svg>
 
-            {/* Tooltip */}
-            {activeLocation && (
+            {/* Tooltip — shown on hover OR when locked */}
+            {displayLocation && (
               <div
-                className="absolute z-10 p-4 rounded-chi pointer-events-none"
+                className="absolute z-10 rounded-chi"
                 style={{
                   backgroundColor: '#F5F0E3',
-                  border: '1px solid rgba(201,144,58,0.2)',
-                  left: `${(activeLocation.cx / 674.71) * 100}%`,
-                  top:  `${(activeLocation.cy / 628.37) * 100}%`,
-                  transform: 'translate(-108%, -120%)',
-                  minWidth: '200px',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                  border: lockedLocation ? '1.5px solid #B8311F' : '1px solid rgba(201,144,58,0.2)',
+                  left: `${(displayLocation.cx / 674.71) * 100}%`,
+                  top:  `${(displayLocation.cy / 628.37) * 100}%`,
+                  transform: 'translate(-108%, -115%)',
+                  minWidth: '220px',
+                  boxShadow: lockedLocation ? '0 8px 40px rgba(184,49,31,0.18)' : '0 8px 32px rgba(0,0,0,0.4)',
+                  pointerEvents: lockedLocation ? 'auto' : 'none',
+                  transition: 'box-shadow 0.2s, border-color 0.2s',
                 }}
+                onClick={e => e.stopPropagation()}
               >
-                <h4 className="font-display text-chi-ink text-base mb-0.5">{activeLocation.name}</h4>
-                <p className="font-body text-chi-smoke text-xs mb-2">{activeLocation.address}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="#C9903A"><path d="M8 0l2.47 5.01L16 5.81l-4 3.9.94 5.5L8 12.88l-4.94 2.6.94-5.5-4-3.9 5.53-.8z"/></svg>
-                    <span className="font-body text-xs" style={{ color: '#C9903A' }}>{activeLocation.rating}</span>
+                <div className="p-4">
+                  <div className="flex items-start justify-between gap-3 mb-1">
+                    <h4 className="font-display text-chi-ink text-base leading-tight">{displayLocation.name}</h4>
+                    {lockedLocation && (
+                      <button
+                        onClick={() => setLockedLocation(null)}
+                        className="flex-shrink-0 w-5 h-5 flex items-center justify-center rounded-full text-chi-mist hover:text-chi-ink transition-colors"
+                        style={{ fontSize: '12px', marginTop: '2px', backgroundColor: 'rgba(0,0,0,0.06)' }}
+                      >
+                        ×
+                      </button>
+                    )}
                   </div>
-                  <a href={`/booking?clinic=${activeLocation.id}`} className="font-body text-chi-cinnabar text-xs hover:underline">Book →</a>
+                  <p className="font-body text-chi-smoke text-xs mb-3">{displayLocation.address}</p>
+                  <div className="flex items-center gap-1 mb-3">
+                    {[1,2,3,4,5].map(s => (
+                      <svg key={s} width="10" height="10" viewBox="0 0 16 16" fill="#C9903A"><path d="M8 0l2.47 5.01L16 5.81l-4 3.9.94 5.5L8 12.88l-4.94 2.6.94-5.5-4-3.9 5.53-.8z"/></svg>
+                    ))}
+                    <span className="font-body text-xs ml-1" style={{ color: '#C9903A' }}>{displayLocation.rating}</span>
+                  </div>
+                  {/* Book Now — always visible in locked state */}
+                  <Link
+                    to={`/booking?clinic=${displayLocation.id}`}
+                    className="block w-full text-center py-2 rounded-chi font-body text-sm transition-all duration-200"
+                    style={{ backgroundColor: '#B8311F', color: '#F5F0E3' }}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#9B2518')}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#B8311F')}
+                  >
+                    Book at this location →
+                  </Link>
                 </div>
+                {/* Tiny hint shown before clicking */}
+                {!lockedLocation && (
+                  <div className="px-4 pb-3 -mt-1">
+                    <p className="font-body text-center" style={{ fontSize: '10px', color: '#8C8478' }}>Click dot to pin</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -177,11 +226,11 @@ export default function InkMapSection() {
 function MobileLocationList() {
   const [activeTab, setActiveTab] = useState('all');
   const tabs = [
-    { key: 'all',           label: 'All' },
-    { key: 'brisbane',      label: 'Brisbane' },
-    { key: 'gold-coast',    label: 'Gold Coast' },
-    { key: 'sunshine-coast',label: 'Sunshine Coast' },
-    { key: 'sydney',        label: 'Sydney' },
+    { key: 'all',            label: 'All'            },
+    { key: 'brisbane',       label: 'Brisbane'       },
+    { key: 'gold-coast',     label: 'Gold Coast'     },
+    { key: 'sunshine-coast', label: 'Sunshine Coast' },
+    { key: 'sydney',         label: 'Sydney'         },
   ];
   const filtered = activeTab === 'all' ? locations : locations.filter(l => l.cluster === activeTab);
 
@@ -189,14 +238,9 @@ function MobileLocationList() {
     <div>
       <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
         {tabs.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+          <button key={tab.key} onClick={() => setActiveTab(tab.key)}
             className="px-4 py-2 rounded-chi font-body text-[13px] uppercase tracking-wider whitespace-nowrap transition-all duration-200"
-            style={{
-              backgroundColor: activeTab === tab.key ? '#B8311F' : 'transparent',
-              color: activeTab === tab.key ? '#F5F0E3' : '#8C8478',
-            }}
+            style={{ backgroundColor: activeTab === tab.key ? '#B8311F' : 'transparent', color: activeTab === tab.key ? '#F5F0E3' : '#8C8478' }}
           >
             {tab.label}
           </button>
@@ -209,7 +253,7 @@ function MobileLocationList() {
               <h4 className="font-display text-chi-parchment text-base">{loc.name}</h4>
               <p className="font-body text-chi-smoke text-sm">{loc.address}</p>
             </div>
-            <a href={`/booking?clinic=${loc.id}`} className="px-4 py-2 bg-chi-cinnabar text-chi-parchment font-body text-sm rounded-chi">Book</a>
+            <Link to={`/booking?clinic=${loc.id}`} className="px-4 py-2 bg-chi-cinnabar text-chi-parchment font-body text-sm rounded-chi">Book</Link>
           </div>
         ))}
       </div>
