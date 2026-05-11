@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { format, startOfMonth, getDay, isSameMonth, isSameDay, isBefore, addMonths, subMonths } from 'date-fns';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 // ─── Palette (light theme) ───────────────────────────────────────────────────
 const C = {
@@ -213,6 +213,23 @@ export default function BookingPage() {
   const [selectedTime,     setSelectedTime]     = useState('');
   const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', email: '', notes: '' });
   const [submitted, setSubmitted] = useState(false);
+
+  const [searchParams] = useSearchParams();
+
+  // On first load: if a ?service= param is present, pre-select it and skip to step 2.
+  // If a ?clinic= param is also present (coming from the map), pre-select the location too.
+  useEffect(() => {
+    const svc = searchParams.get('service');
+    const loc = searchParams.get('clinic');
+    if (svc) {
+      setSelectedService(svc);
+      setStep(2);
+    }
+    if (loc) {
+      setSelectedLocation(loc);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => { window.scrollTo(0, 0); }, [step]);
 
