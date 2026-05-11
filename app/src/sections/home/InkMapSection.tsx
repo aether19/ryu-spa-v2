@@ -136,7 +136,7 @@ export default function InkMapSection() {
                     )}
                     {/* Solid dot */}
                     <circle
-                      cx={loc.cx} cy={loc.cy} r="5"
+                      cx={loc.cx} cy={loc.cy} r="7"
                       fill={isActive ? '#FF4D2E' : '#B8311F'}
                       stroke="rgba(245,240,227,0.3)"
                       strokeWidth="0.8"
