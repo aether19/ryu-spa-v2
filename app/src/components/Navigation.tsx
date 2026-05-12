@@ -41,7 +41,7 @@ export default function Navigation() {
         <div className="max-w-[1280px] mx-auto px-6 lg:px-10 flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 z-[101]">
-            <span className={`font-display text-xl lg:text-2xl tracking-tight transition-colors duration-300 ${scrolled ? 'text-chi-ink' : 'text-chi-parchment'}`}>Chi Link</span>
+            <span className={`font-display text-xl lg:text-2xl tracking-tight transition-colors duration-300 ${scrolled ? 'text-chi-parchment' : 'text-chi-ink'}`}>Chi Link</span>
             <span className="text-chi-cinnabar text-lg font-display">气</span>
           </Link>
 
@@ -51,7 +51,7 @@ export default function Navigation() {
               <Link
                 key={item.label}
                 to={item.to}
-                className={`label-style transition-colors duration-300 ${scrolled ? 'text-chi-smoke hover:text-chi-ink' : 'text-chi-mist hover:text-chi-parchment'}`}
+                className={`label-style transition-colors duration-300 ${scrolled ? 'text-chi-mist hover:text-chi-parchment' : 'text-chi-smoke hover:text-chi-ink'}`}
               >
                 {item.label}
               </Link>
@@ -71,8 +71,8 @@ export default function Navigation() {
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Menu"
           >
-            <span className={`w-5 h-px block transition-all duration-300 ${scrolled ? 'bg-chi-ink' : 'bg-chi-parchment'} ${mobileOpen ? 'rotate-45 translate-y-[3px]' : ''}`} />
-            <span className={`w-5 h-px block transition-all duration-300 ${scrolled ? 'bg-chi-ink' : 'bg-chi-parchment'} ${mobileOpen ? '-rotate-45 -translate-y-[3px]' : ''}`} />
+            <span className={`w-5 h-px block transition-all duration-300 ${scrolled ? 'bg-chi-parchment' : 'bg-chi-ink'} ${mobileOpen ? 'rotate-45 translate-y-[3px]' : ''}`} />
+            <span className={`w-5 h-px block transition-all duration-300 ${scrolled ? 'bg-chi-parchment' : 'bg-chi-ink'} ${mobileOpen ? '-rotate-45 -translate-y-[3px]' : ''}`} />
           </button>
         </div>
       </nav>
