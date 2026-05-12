@@ -94,15 +94,13 @@ export default function LocationPage() {
             </div>
           </div>
 
-          <a
-            href={`https://bookrelax.com.au/booking?clinic=${location.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to={`/booking?clinic=${location.slug}`}
             className="hero-anim inline-flex items-center px-6 py-3 bg-chi-cinnabar text-chi-parchment label-style rounded-chi hover:bg-chi-ink transition-all duration-200 mb-4 opacity-0"
             style={{ fontSize: '13px' }}
           >
             Book at {location.suburb} →
-          </a>
+          </Link>
 
           <p className="hero-anim font-body text-chi-smoke text-sm opacity-0">
             Also available at{' '}

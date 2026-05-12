@@ -51,7 +51,7 @@ export default function Navigation() {
               <Link
                 key={item.label}
                 to={item.to}
-                className="label-style text-chi-mist hover:text-chi-parchment transition-colors duration-300"
+                className={`label-style transition-colors duration-300 ${scrolled ? 'text-chi-mist hover:text-chi-parchment' : 'text-chi-smoke hover:text-chi-ink'}`}
               >
                 {item.label}
               </Link>
@@ -71,8 +71,8 @@ export default function Navigation() {
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Menu"
           >
-            <span className={`w-5 h-px bg-chi-parchment block transition-all duration-300 ${mobileOpen ? 'rotate-45 translate-y-[3px]' : ''}`} />
-            <span className={`w-5 h-px bg-chi-parchment block transition-all duration-300 ${mobileOpen ? '-rotate-45 -translate-y-[3px]' : ''}`} />
+            <span className={`w-5 h-px block transition-all duration-300 ${scrolled ? 'bg-chi-parchment' : 'bg-chi-ink'} ${mobileOpen ? 'rotate-45 translate-y-[3px]' : ''}`} />
+            <span className={`w-5 h-px block transition-all duration-300 ${scrolled ? 'bg-chi-parchment' : 'bg-chi-ink'} ${mobileOpen ? '-rotate-45 -translate-y-[3px]' : ''}`} />
           </button>
         </div>
       </nav>
