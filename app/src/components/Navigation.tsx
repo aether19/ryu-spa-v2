@@ -41,7 +41,7 @@ export default function Navigation() {
         <div className="max-w-[1280px] mx-auto px-6 lg:px-10 flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 z-[101]">
-            <span className={`font-display text-xl lg:text-2xl tracking-tight transition-colors duration-300 ${scrolled ? 'text-chi-parchment' : 'text-chi-ink'}`}>Chi Link</span>
+            <span className="font-display text-xl lg:text-2xl tracking-tight text-chi-parchment">Chi Link</span>
             <span className="text-chi-cinnabar text-lg font-display">气</span>
           </Link>
 
