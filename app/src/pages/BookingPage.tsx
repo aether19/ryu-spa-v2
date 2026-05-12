@@ -227,6 +227,7 @@ export default function BookingPage() {
     }
     if (loc) {
       setSelectedLocation(loc);
+      if (!svc) setStep(2);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

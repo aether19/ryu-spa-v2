@@ -127,7 +127,7 @@ export default function LocationsHubPage() {
                       <span className="font-body text-chi-ink text-xs font-medium">{loc.rating}</span>
                       <span className="font-body text-chi-smoke text-xs">({loc.reviews})</span>
                     </div>
-                    <Link to={`/locations/${loc.slug}`} className="font-body text-chi-cinnabar text-[13px] hover:underline">Book at {loc.name} →</Link>
+                    <Link to={`/booking?clinic=${loc.slug}`} className="font-body text-chi-cinnabar text-[13px] hover:underline">Book at {loc.name} →</Link>
                   </div>
                 </div>
               </div>
